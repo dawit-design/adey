@@ -26,3 +26,12 @@ mongodb-data
 
 # misc
 *.log
+
+# planning & local docs (not for git)
+MVP_PLAN.md
+EXECUTION_CHECKLIST.md
+CODEBASE_REFERENCE.md
+FRESH_START.md
+PACKAGES_INSTALLED.md
+
+*.log

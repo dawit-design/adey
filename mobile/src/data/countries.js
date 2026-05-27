@@ -1,0 +1,45 @@
+export const COUNTRIES = [
+  'Ethiopia',
+  'United States',
+  'United Kingdom',
+  'Canada',
+  'Germany',
+  'France',
+  'Italy',
+  'Kenya',
+  'Uganda',
+  'Rwanda',
+  'Tanzania',
+  'South Africa',
+  'Nigeria',
+  'Ghana',
+  'Egypt',
+  'United Arab Emirates',
+  'Saudi Arabia',
+  'Qatar',
+  'Turkey',
+  'India',
+  'China',
+  'Japan',
+  'Australia',
+];
+
+export const GENDERS = [
+  { label: 'Male', value: 'male' },
+  { label: 'Female', value: 'female' },
+  { label: 'Other', value: 'other' },
+];
+
+export const TIMEZONES = [
+  { label: 'UTC', value: 'UTC' },
+  { label: 'East Africa Time (EAT)', value: 'Africa/Addis_Ababa' },
+  { label: 'New York (EST/EDT)', value: 'America/New_York' },
+  { label: 'Los Angeles (PST/PDT)', value: 'America/Los_Angeles' },
+  { label: 'London (GMT/BST)', value: 'Europe/London' },
+  { label: 'Paris (CET/CEST)', value: 'Europe/Paris' },
+  { label: 'Dubai (GST)', value: 'Asia/Dubai' },
+  { label: 'India (IST)', value: 'Asia/Kolkata' },
+  { label: 'China (CST)', value: 'Asia/Shanghai' },
+  { label: 'Tokyo (JST)', value: 'Asia/Tokyo' },
+  { label: 'Sydney (AEST)', value: 'Australia/Sydney' },
+];
