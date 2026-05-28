@@ -25,12 +25,12 @@ export default function App() {
 
           <Stack.Screen name="Main" component={MainTabs} />
 
-          <Stack.Screen name="PlaceDetails" component={PlaceDetailScreen} />
+          {/* <Stack.Screen name="PlaceDetails" component={PlaceDetailScreen} />
           <Stack.Screen
             name="CollectionDetails"
             component={CollectionDetailsScreen}
             options={{ headerShown: false }}
-          />
+          /> */}
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

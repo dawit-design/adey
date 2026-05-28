@@ -8,6 +8,7 @@ const userRoutes = require("./routes/userRoutes");
 const placeRoutes = require("./routes/placeRoutes");
 const savedRoutes = require("./routes/savedRoutes");
 const collectionRoutes = require("./routes/collectionRoutes");
+const passportRoutes = require("./routes/passportRoutes");
 dotenv.config();
 
 const app = express();
@@ -30,6 +31,7 @@ app.use("/auth", userRoutes);
 app.use("/api/places", placeRoutes);
 app.use("/saved", savedRoutes);
 app.use("/api/collections", collectionRoutes);
+app.use("/api/passport", passportRoutes);
 
 app.get("/", (req, res) => {
   res.json({

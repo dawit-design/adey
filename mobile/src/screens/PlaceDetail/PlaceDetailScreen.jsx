@@ -16,11 +16,21 @@ import {
   unsavePlace,
 } from "../../services/savedService";
 
+import {
+  getPassport,
+  addVisitedPlace,
+  removeVisitedPlace,
+  addWantToVisitPlace,
+  removeWantToVisitPlace,
+} from "../../services/passportService";
+
 export default function PlaceDetailScreen({ route, navigation }) {
   const { slug } = route.params || {};
 
   const [place, setPlace] = useState(null);
   const [isSaved, setIsSaved] = useState(false);
+  const [isVisited, setIsVisited] = useState(false);
+  const [isWantToVisit, setIsWantToVisit] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,25 +38,49 @@ export default function PlaceDetailScreen({ route, navigation }) {
   }, [slug]);
 
   const loadPlace = async () => {
-  try {
-    setLoading(true);
-
-    const placeData = await getPlaceBySlug(slug);
-    setPlace(placeData);
-
     try {
-      const savedIds = await getSavedPlaceIds();
-      setIsSaved(savedIds.includes(placeData._id));
-    } catch (savedError) {
-      console.log("Saved IDs not loaded:", savedError.response?.data || savedError.message);
-      setIsSaved(false);
+      setLoading(true);
+
+      const placeData = await getPlaceBySlug(slug);
+      setPlace(placeData);
+
+      try {
+        const savedIds = await getSavedPlaceIds();
+        setIsSaved(savedIds.includes(placeData._id));
+      } catch (savedError) {
+        console.log(
+          "Saved IDs not loaded:",
+          savedError.response?.data || savedError.message
+        );
+        setIsSaved(false);
+      }
+
+      try {
+        const passport = await getPassport();
+
+        const visitedIds =
+          passport.visitedPlaces?.map((item) => item._id || item) || [];
+
+        const wantToVisitIds =
+          passport.wantToVisitPlaces?.map((item) => item._id || item) || [];
+
+        setIsVisited(visitedIds.includes(placeData._id));
+        setIsWantToVisit(wantToVisitIds.includes(placeData._id));
+      } catch (passportError) {
+        console.log(
+          "Passport not loaded:",
+          passportError.response?.data || passportError.message
+        );
+        setIsVisited(false);
+        setIsWantToVisit(false);
+      }
+    } catch (error) {
+      console.log("Failed to load place:", error.response?.data || error.message);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.log("Failed to load place:", error.response?.data || error.message);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
+
   const toggleSavePlace = async () => {
     try {
       if (!place) return;
@@ -59,7 +93,49 @@ export default function PlaceDetailScreen({ route, navigation }) {
         setIsSaved(true);
       }
     } catch (error) {
-      console.log("Failed to save/unsave place:", error.response?.data || error.message);
+      console.log(
+        "Failed to save/unsave place:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  const toggleWantToVisit = async () => {
+    try {
+      if (!place) return;
+
+      if (isWantToVisit) {
+        await removeWantToVisitPlace(place._id);
+        setIsWantToVisit(false);
+      } else {
+        await addWantToVisitPlace(place._id);
+        setIsWantToVisit(true);
+      }
+    } catch (error) {
+      console.log(
+        "Failed to update want to visit:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  const toggleVisited = async () => {
+    try {
+      if (!place) return;
+
+      if (isVisited) {
+        await removeVisitedPlace(place._id);
+        setIsVisited(false);
+      } else {
+        await addVisitedPlace(place._id);
+        setIsVisited(true);
+        setIsWantToVisit(false);
+      }
+    } catch (error) {
+      console.log(
+        "Failed to update visited:",
+        error.response?.data || error.message
+      );
     }
   };
 
@@ -82,7 +158,10 @@ export default function PlaceDetailScreen({ route, navigation }) {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.hero}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
           <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
 
@@ -95,7 +174,7 @@ export default function PlaceDetailScreen({ route, navigation }) {
         </TouchableOpacity>
 
         <View style={styles.heroOverlay}>
-          <Text style={styles.type}>{place.type}</Text>
+          <Text style={styles.type}>{place.category || place.type}</Text>
           <Text style={styles.title}>{place.name}</Text>
 
           <View style={styles.locationRow}>
@@ -107,9 +186,54 @@ export default function PlaceDetailScreen({ route, navigation }) {
         </View>
       </View>
 
-
       <View style={styles.content}>
         <Text style={styles.shortDescription}>{place.shortDescription}</Text>
+
+        <View style={styles.passportActions}>
+          <TouchableOpacity
+            style={[
+              styles.passportButton,
+              isWantToVisit && styles.passportButtonActive,
+            ]}
+            onPress={toggleWantToVisit}
+          >
+            <Ionicons
+              name={isWantToVisit ? "flag" : "flag-outline"}
+              size={18}
+              color={isWantToVisit ? "#fff" : "#556B2F"}
+            />
+            <Text
+              style={[
+                styles.passportButtonText,
+                isWantToVisit && styles.passportButtonTextActive,
+              ]}
+            >
+              Want to Visit
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.passportButton,
+              isVisited && styles.passportButtonActive,
+            ]}
+            onPress={toggleVisited}
+          >
+            <Ionicons
+              name={isVisited ? "checkmark-circle" : "checkmark-circle-outline"}
+              size={18}
+              color={isVisited ? "#fff" : "#556B2F"}
+            />
+            <Text
+              style={[
+                styles.passportButtonText,
+                isVisited && styles.passportButtonTextActive,
+              ]}
+            >
+              Visited
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.metaRow}>
           <View style={styles.metaCard}>
@@ -136,7 +260,9 @@ export default function PlaceDetailScreen({ route, navigation }) {
         {place.highlights?.length > 0 ? (
           <Section title="Highlights">
             {place.highlights.map((item, index) => (
-              <Text key={index} style={styles.bullet}>• {item}</Text>
+              <Text key={index} style={styles.bullet}>
+                • {item}
+              </Text>
             ))}
           </Section>
         ) : null}
@@ -166,7 +292,9 @@ export default function PlaceDetailScreen({ route, navigation }) {
         ) : null}
 
         <Section title="Best Time to Visit">
-          <Text style={styles.body}>{place.bestTimeToVisit || "Not specified"}</Text>
+          <Text style={styles.body}>
+            {place.bestTimeToVisit || "Not specified"}
+          </Text>
         </Section>
       </View>
     </ScrollView>

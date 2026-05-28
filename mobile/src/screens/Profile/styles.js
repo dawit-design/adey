@@ -149,4 +149,39 @@ export default StyleSheet.create({
     fontWeight: '700',
     fontSize: 16,
   },
+  passportCard: {
+  backgroundColor: colors.primary,
+  borderRadius: 22,
+  padding: 18,
+  marginTop: 18,
+  flexDirection: "row",
+  alignItems: "center",
+},
+
+passportIconBox: {
+  width: 44,
+  height: 44,
+  borderRadius: 22,
+  backgroundColor: "rgba(255,255,255,0.18)",
+  alignItems: "center",
+  justifyContent: "center",
+  marginRight: 14,
+},
+
+passportTextBox: {
+  flex: 1,
+},
+
+passportTitle: {
+  fontSize: 18,
+  fontWeight: "800",
+  color: colors.white,
+  marginBottom: 4,
+},
+
+passportSubtitle: {
+  fontSize: 13,
+  color: "#F4F4F4",
+  lineHeight: 18,
+},
 });

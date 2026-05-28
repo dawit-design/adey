@@ -177,4 +177,49 @@ export default StyleSheet.create({
     fontWeight: "600",
     textTransform: "capitalize",
   },
+  saveButton: {
+  position: "absolute",
+  top: 54,
+  right: 20,
+  width: 42,
+  height: 42,
+  borderRadius: 21,
+  backgroundColor: "rgba(0,0,0,0.35)",
+  alignItems: "center",
+  justifyContent: "center",
+},
+
+passportActions: {
+  flexDirection: "row",
+  gap: 10,
+  marginBottom: 18,
+},
+
+passportButton: {
+  flex: 1,
+  backgroundColor: colors.white,
+  borderWidth: 1,
+  borderColor: colors.primary,
+  borderRadius: 16,
+  paddingVertical: 12,
+  paddingHorizontal: 10,
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 6,
+},
+
+passportButtonActive: {
+  backgroundColor: colors.primary,
+},
+
+passportButtonText: {
+  color: colors.primary,
+  fontWeight: "800",
+  fontSize: 13,
+},
+
+passportButtonTextActive: {
+  color: colors.white,
+},
 });
