@@ -8,7 +8,18 @@ export default StyleSheet.create({
     paddingTop: 32,
     justifyContent: "flex-start",
   },
-
+heartButton: {
+  position: "absolute",
+  top: 14,
+  right: 14,
+  zIndex: 10,
+  backgroundColor: "#fff",
+  width: 38,
+  height: 38,
+  borderRadius: 19,
+  justifyContent: "center",
+  alignItems: "center",
+},
   heroCard: {
     ...globalStyles.card,
     backgroundColor: colors.white,

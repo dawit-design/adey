@@ -6,20 +6,40 @@ import {
   FlatList,
   ActivityIndicator,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
 
 import globalStyles from "../../styles/theme";
 import styles from "./styles";
 import { getAllPlaces } from "../../services/placeService";
+import {
+  getSavedPlaceIds,
+  savePlace,
+  unsavePlace,
+} from "../../services/savedService";
 
 export default function HomeScreen({ navigation }) {
   const [featuredPlaces, setFeaturedPlaces] = useState([]);
+  const [savedIds, setSavedIds] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const loadFeaturedPlaces = async () => {
     try {
       setLoading(true);
-      const data = await getAllPlaces({ featured: true });
-      setFeaturedPlaces(data);
+
+      const placesData = await getAllPlaces({ featured: true });
+      setFeaturedPlaces(placesData);
+
+      try {
+        const savedData = await getSavedPlaceIds();
+        setSavedIds(savedData);
+      } catch (savedError) {
+        console.log(
+          "Saved IDs not loaded:",
+          savedError.response?.data || savedError.message,
+        );
+        setSavedIds([]);
+      }
     } catch (error) {
       console.log("Failed to load featured places:", error.message);
     } finally {
@@ -31,28 +51,65 @@ export default function HomeScreen({ navigation }) {
     loadFeaturedPlaces();
   }, []);
 
-  const renderPlace = ({ item }) => (
-    <TouchableOpacity
-      style={styles.placeCard}
-      onPress={() =>
-        navigation.navigate("PlaceDetails", {
-          slug: item.slug,
-        })
+  const toggleSavePlace = async (placeId) => {
+    try {
+      const isSaved = savedIds.includes(placeId);
+
+      if (isSaved) {
+        await unsavePlace(placeId);
+        setSavedIds((prev) => prev.filter((id) => id !== placeId));
+      } else {
+        await savePlace(placeId);
+        setSavedIds((prev) => [...prev, placeId]);
       }
-    >
-      <Text style={styles.placeType}>{item.type}</Text>
-      <Text style={styles.placeName}>{item.name}</Text>
-      <Text style={styles.placeLocation}>
-        {item.city || item.area || item.region}
-      </Text>
-      <Text style={styles.placeDescription} numberOfLines={2}>
-        {item.shortDescription}
-      </Text>
-    </TouchableOpacity>
-  );
+    } catch (error) {
+      console.log(
+        "Failed to save/unsave place:",
+        error.response?.data || error.message,
+      );
+    }
+  };
+
+  const renderPlace = ({ item }) => {
+    const isSaved = savedIds.includes(item._id);
+
+    return (
+      <TouchableOpacity
+        style={styles.placeCard}
+        onPress={() =>
+          navigation.navigate("PlaceDetails", {
+            slug: item.slug,
+          })
+        }
+      >
+        <TouchableOpacity
+          style={styles.heartButton}
+          onPress={(e) => {
+            e.stopPropagation();
+            toggleSavePlace(item._id);
+          }}
+        >
+          <Ionicons
+            name={isSaved ? "heart" : "heart-outline"}
+            size={24}
+            color={isSaved ? "#E63946" : "#556B2F"}
+          />
+        </TouchableOpacity>
+
+        <Text style={styles.placeType}>{item.type}</Text>
+        <Text style={styles.placeName}>{item.name}</Text>
+        <Text style={styles.placeLocation}>
+          {item.city || item.area || item.region}
+        </Text>
+        <Text style={styles.placeDescription} numberOfLines={2}>
+          {item.shortDescription}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <View style={styles.heroCard}>
         <Text style={styles.header}>Welcome to Adey Travels</Text>
         <Text style={styles.body}>
@@ -87,6 +144,6 @@ export default function HomeScreen({ navigation }) {
       >
         <Text style={globalStyles.buttonPrimaryText}>Refresh</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }

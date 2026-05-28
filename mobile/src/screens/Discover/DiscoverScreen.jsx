@@ -11,7 +11,19 @@ import {
 import styles from "./styles";
 import { getAllPlaces } from "../../services/placeService";
 
-const filters = ["all", "destination", "resort", "lodge", "hotel", "experience"];
+const filters = [
+  "all",
+  "destination",
+  "resort",
+  "lodge",
+  "hotel",
+  "experience",
+  "park",
+  "museum",
+  "restaurant",
+  "cafe",
+  "cultural-site",
+];
 
 export default function DiscoverScreen({ navigation }) {
   const [places, setPlaces] = useState([]);
@@ -29,7 +41,10 @@ export default function DiscoverScreen({ navigation }) {
       const data = await getAllPlaces();
       setPlaces(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.log("Failed to load places:", error.response?.data || error.message);
+      console.log(
+        "Failed to load places:",
+        error.response?.data || error.message,
+      );
     } finally {
       setLoading(false);
     }
