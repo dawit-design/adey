@@ -1,19 +1,18 @@
 import axios from "axios";
 import { Platform } from "react-native";
 
-// Choose host depending on platform / environment
 const getBaseUrl = () => {
-  // Default dev server port
   const port = 5050;
 
-  // If running on Android emulator use 10.0.2.2
-  if (Platform.OS === "android") return `http://10.0.2.2:${port}/auth`;
+  if (Platform.OS === "android") {
+    return `http://10.0.2.2:${port}`;
+  }
 
-  // For iOS simulator and web use localhost
-  if (Platform.OS === "ios" || Platform.OS === "web") return `http://localhost:${port}/auth`;
+  if (Platform.OS === "ios" || Platform.OS === "web") {
+    return `http://localhost:${port}`;
+  }
 
-  // For real devices, try LAN address (you may set this to your machine IP)
-  return `http://<YOUR_COMPUTER_IP>:${port}/auth`;
+  return `http://<YOUR_COMPUTER_IP>:${port}`;
 };
 
 const axiosInstance = axios.create({

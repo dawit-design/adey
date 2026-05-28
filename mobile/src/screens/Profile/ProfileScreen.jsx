@@ -147,12 +147,12 @@ export default function ProfileScreen({ navigation }) {
               <Text style={styles.infoValue}>{user.phone_number || 'Not set'}</Text>
             </View>
 
-            <View style={styles.infoRow}>
+            {/* <View style={styles.infoRow}>
               <Text style={styles.infoLabel}>Email Verified</Text>
               <Text style={styles.infoValue}>
                 {user.is_email_verified ? 'Yes' : 'No'}
               </Text>
-            </View>
+            </View> */}
           </View>
 
           <View style={styles.sectionCard}>

@@ -2,8 +2,11 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const morgan = require("morgan");
+
 const { connectDB } = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
+const placeRoutes = require("./routes/placeRoutes");
+
 dotenv.config();
 
 const app = express();
@@ -17,12 +20,13 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/adey";
 connectDB(MONGO_URI).then((connected) => {
   if (!connected) {
     console.warn(
-      "MongoDB connection failed. The server is still running, but /api/places will return sample data if the database is unavailable.",
+      "MongoDB connection failed. The server is still running, but /api/places will return sample data if the database is unavailable."
     );
   }
 });
 
 app.use("/auth", userRoutes);
+app.use("/api/places", placeRoutes);
 
 app.get("/", (req, res) => {
   res.json({

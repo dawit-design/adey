@@ -1,57 +1,57 @@
 import axiosInstance, { setAuthToken } from "../utils/axiosInstance";
 
 export const register = async (data) => {
-  const response = await axiosInstance.post("/register", data);
+  const response = await axiosInstance.post("/auth/register", data);
   return response.data;
 };
 
 export const login = async (data) => {
-  const response = await axiosInstance.post("/login", data);
+  const response = await axiosInstance.post("/auth/login", data);
   return response.data;
 };
 
 export const getCurrentUser = async () => {
-  const response = await axiosInstance.get("/me");
+  const response = await axiosInstance.get("/auth/me");
   return response.data;
 };
 
 export const getAllUsers = async () => {
-  const response = await axiosInstance.get("/users");
+  const response = await axiosInstance.get("/auth/users");
   return response.data;
 };
 
 export const getUserById = async (id) => {
-  const response = await axiosInstance.get(`/users/${id}`);
+  const response = await axiosInstance.get(`/auth/users/${id}`);
   return response.data;
 };
 
 export const createUser = async (data) => {
-  const response = await axiosInstance.post("/users", data);
+  const response = await axiosInstance.post("/auth/users", data);
   return response.data;
 };
 
 export const updateUserById = async (id, data) => {
-  const response = await axiosInstance.put(`/users/${id}`, data);
+  const response = await axiosInstance.put(`/auth/users/${id}`, data);
   return response.data;
 };
 
 export const deleteUserById = async (id) => {
-  const response = await axiosInstance.delete(`/users/${id}`);
+  const response = await axiosInstance.delete(`/auth/users/${id}`);
   return response.data;
 };
 
 export const updateProfile = async (data) => {
-  const response = await axiosInstance.put("/update-profile", data);
+  const response = await axiosInstance.put("/auth/update-profile", data);
   return response.data;
 };
 
 export const changePassword = async (data) => {
-  const response = await axiosInstance.put("/change-password", data);
+  const response = await axiosInstance.put("/auth/change-password", data);
   return response.data;
 };
 
 export const deleteAccount = async () => {
-  const response = await axiosInstance.delete("/delete-account");
+  const response = await axiosInstance.delete("/auth/delete-account");
   return response.data;
 };
 
