@@ -2,8 +2,25 @@ const mongoose = require("mongoose");
 
 const placeSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true, trim: true },
-    slug: { type: String, required: true, unique: true, lowercase: true },
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+
+    country: {
+      type: String,
+      default: "Ethiopia",
+      trim: true,
+    },
 
     type: {
       type: String,
@@ -44,21 +61,58 @@ const placeSchema = new mongoose.Schema(
       ],
     },
 
-    region: { type: String, required: true },
-    city: String,
-    area: String,
+    region: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
-    shortDescription: { type: String, required: true },
-    story: String,
+    city: {
+      type: String,
+      trim: true,
+    },
+
+    area: {
+      type: String,
+      trim: true,
+    },
+
+    shortDescription: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    story: {
+      type: String,
+      trim: true,
+    },
 
     highlights: [String],
+
     activities: [String],
+
     amenities: [String],
+
     tags: [String],
 
-    bestTimeToVisit: String,
+    bestTimeToVisit: {
+      type: String,
+      trim: true,
+    },
+
+    seasonality: {
+      type: [String],
+      enum: ["dry-season", "rainy-season", "year-round"],
+      default: ["year-round"],
+    },
+
     idealFor: [String],
-    estimatedVisitDuration: String,
+
+    estimatedVisitDuration: {
+      type: String,
+      trim: true,
+    },
 
     priceRange: {
       type: String,
@@ -67,18 +121,47 @@ const placeSchema = new mongoose.Schema(
     },
 
     location: {
-      latitude: Number,
-      longitude: Number,
+      type: {
+        type: String,
+        enum: ["Point"],
+        default: "Point",
+      },
+      coordinates: {
+        type: [Number], // [longitude, latitude]
+        default: [0, 0],
+      },
     },
 
     coverImage: String,
+
     images: [String],
 
-    nearbyPlaces: [String],
+    nearbyPlaces: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Place",
+      },
+    ],
 
-    featured: { type: Boolean, default: false },
-    isNewOrGrowing: { type: Boolean, default: false },
-    isCurated: { type: Boolean, default: true },
+    featured: {
+      type: Boolean,
+      default: false,
+    },
+
+    featuredOrder: {
+      type: Number,
+      default: 0,
+    },
+
+    isNewOrGrowing: {
+      type: Boolean,
+      default: false,
+    },
+
+    isCurated: {
+      type: Boolean,
+      default: true,
+    },
 
     tourismPriority: {
       type: String,
@@ -96,15 +179,35 @@ const placeSchema = new mongoose.Schema(
 
     ownershipType: {
       type: String,
-      enum: ["public", "private", "public-private", "community", "unknown"],
+      enum: [
+        "public",
+        "private",
+        "public-private",
+        "community",
+        "religious",
+        "mixed",
+        "unknown",
+      ],
       default: "unknown",
     },
-
+    seasonality: {
+      type: [String],
+      enum: [
+        "dry-season",
+        "rainy-season",
+        "year-round",
+        "festival-season",
+        "weekends",
+        "evenings",
+      ],
+      default: ["year-round"],
+    },
     developmentStatus: {
       type: String,
       enum: [
         "established",
         "new",
+        "emerging",
         "under-development",
         "recently-developed",
         "unknown",
@@ -114,13 +217,38 @@ const placeSchema = new mongoose.Schema(
 
     sourceLinks: [String],
 
-    lastVerifiedAt: Date,
+    lastVerifiedAt: {
+      type: Date,
+      default: Date.now,
+    },
 
     popularityScore: {
       type: Number,
       default: 50,
       min: 0,
       max: 100,
+    },
+
+    rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      default: 4,
+    },
+
+    visitCount: {
+      type: Number,
+      default: 0,
+    },
+
+    seoTitle: {
+      type: String,
+      trim: true,
+    },
+
+    seoDescription: {
+      type: String,
+      trim: true,
     },
 
     apiVisibility: {
@@ -135,7 +263,9 @@ const placeSchema = new mongoose.Schema(
       default: "published",
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  },
 );
 
 placeSchema.index({
@@ -150,5 +280,9 @@ placeSchema.index({
   category: "text",
   tourismPriority: "text",
 });
+
+placeSchema.index({ location: "2dsphere" });
+
+placeSchema.index({ name: 1, region: 1 }, { unique: true });
 
 module.exports = mongoose.model("Place", placeSchema);
