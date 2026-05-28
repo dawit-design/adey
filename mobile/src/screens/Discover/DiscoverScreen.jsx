@@ -10,7 +10,7 @@ import {
 
 import styles from "./styles";
 import { getAllPlaces } from "../../services/placeService";
-
+import { SafeAreaView } from "react-native-safe-area-context";
 const filters = [
   "all",
   "destination",
@@ -81,7 +81,7 @@ export default function DiscoverScreen({ navigation }) {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <Text style={styles.title}>Discover Ethiopia</Text>
       <Text style={styles.subtitle}>
         Search destinations, resorts, lodges, and experiences.
@@ -130,6 +130,6 @@ export default function DiscoverScreen({ navigation }) {
           }
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 }

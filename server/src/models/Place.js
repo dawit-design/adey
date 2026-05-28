@@ -7,7 +7,11 @@ const placeSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
     slug: {
       type: String,
       required: true,

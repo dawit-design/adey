@@ -9,11 +9,12 @@ const {
   deletePlace,
 } = require("../controllers/placeController");
 const authMiddleware = require("../middleware/authMiddleware");
+const adminOnly = require("../middleware/adminOnly");
 router.get("/", getPlaces);
 router.get("/:slug", getPlaceBySlug);
 
-router.post("/", authMiddleware, createPlace);
-router.put("/:id", authMiddleware, updatePlace);
-router.delete("/:id", authMiddleware, deletePlace);
+router.post("/", authMiddleware, adminOnly, createPlace);
+router.put("/:id", authMiddleware, adminOnly, updatePlace);
+router.delete("/:id", authMiddleware, adminOnly, deletePlace);
 
 module.exports = router;
