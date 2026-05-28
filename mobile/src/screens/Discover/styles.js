@@ -33,28 +33,32 @@ export default StyleSheet.create({
     flexWrap: "wrap",
     gap: 8,
     marginBottom: 14,
+    paddingBottom: 20,
   },
 
   filterChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.borderGray,
-  },
+  paddingHorizontal: 12,
+  paddingVertical: 8,
+  borderRadius: 20,
+  backgroundColor: colors.white,
+  borderWidth: 1,
+  borderColor: colors.borderGray,
+  minHeight: 36,
+  justifyContent: "center",
+  alignItems: "center",
+},
 
   filterChipActive: {
     backgroundColor: colors.primary,
     borderColor: colors.primary,
   },
 
-  filterText: {
-    fontSize: 13,
-    color: colors.darkGray,
-    textTransform: "capitalize",
-    fontWeight: "600",
-  },
+ filterText: {
+  fontSize: 13,
+  color: "#333333",
+  textTransform: "capitalize",
+  fontWeight: "600",
+},
 
   filterTextActive: {
     color: colors.white,
@@ -99,4 +103,24 @@ export default StyleSheet.create({
     color: colors.darkGray,
     marginTop: 40,
   },
+  activeExperienceBox: {
+  backgroundColor: "#F1F4EA",
+  borderRadius: 14,
+  padding: 12,
+  marginTop: 12,
+  marginBottom: 12,
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
+},
+
+activeExperienceText: {
+  color: colors.primary,
+  fontWeight: "700",
+},
+
+clearExperienceText: {
+  color: colors.accent,
+  fontWeight: "700",
+},
 });

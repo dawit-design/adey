@@ -1,15 +1,16 @@
-import React from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import React from "react";
+import { StatusBar } from "expo-status-bar";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { colors } from './styles/theme';
+import { colors } from "./styles/theme";
 
-import LandingScreen from './screens/Landing/LandingScreen';
-import MainTabs from './navigation/MainTabs';
+import LandingScreen from "./screens/Landing/LandingScreen";
+import MainTabs from "./navigation/MainTabs";
 
-import PlaceDetailScreen from './screens/PlaceDetail/PlaceDetailScreen';
+import PlaceDetailScreen from "./screens/PlaceDetail/PlaceDetailScreen";
+import CollectionDetailsScreen from "./screens/Collection/CollectionDetailsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,19 +21,15 @@ export default function App() {
         <StatusBar style="dark" backgroundColor={colors.lightGray} />
 
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen
-            name="Landing"
-            component={LandingScreen}
-          />
+          <Stack.Screen name="Landing" component={LandingScreen} />
 
-          <Stack.Screen
-            name="Main"
-            component={MainTabs}
-          />
+          <Stack.Screen name="Main" component={MainTabs} />
 
+          <Stack.Screen name="PlaceDetails" component={PlaceDetailScreen} />
           <Stack.Screen
-            name="PlaceDetails"
-            component={PlaceDetailScreen}
+            name="CollectionDetails"
+            component={CollectionDetailsScreen}
+            options={{ headerShown: false }}
           />
         </Stack.Navigator>
       </NavigationContainer>

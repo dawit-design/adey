@@ -1,10 +1,22 @@
 import axiosInstance from "../utils/axiosInstance";
 
 export const getAllPlaces = async (params = {}) => {
-  const response = await axiosInstance.get("/api/places", { params });
+  const cleanedParams = {};
+
+  Object.keys(params).forEach((key) => {
+    if (Array.isArray(params[key])) {
+      cleanedParams[key] = params[key].join(",");
+    } else if (params[key] !== undefined && params[key] !== null) {
+      cleanedParams[key] = params[key];
+    }
+  });
+
+  const response = await axiosInstance.get("/api/places", {
+    params: cleanedParams,
+  });
+
   return response.data;
 };
-
 export const getFeaturedPlaces = async () => {
   const response = await axiosInstance.get("/api/places", {
     params: { featured: true },

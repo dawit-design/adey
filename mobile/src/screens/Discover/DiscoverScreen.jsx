@@ -6,12 +6,14 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
 
 import styles from "./styles";
 import { getAllPlaces } from "../../services/placeService";
 import { SafeAreaView } from "react-native-safe-area-context";
-const filters = [
+
+const typeFilters = [
   "all",
   "destination",
   "resort",
@@ -25,7 +27,10 @@ const filters = [
   "cultural-site",
 ];
 
-export default function DiscoverScreen({ navigation }) {
+export default function DiscoverScreen({ navigation, route }) {
+  const experienceTitle = route?.params?.experienceTitle;
+  const experienceFilters = route?.params?.filters;
+
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeType, setActiveType] = useState("all");
@@ -38,42 +43,91 @@ export default function DiscoverScreen({ navigation }) {
   const loadPlaces = async () => {
     try {
       setLoading(true);
+
+      // Load all places first, then curate/filter on frontend
       const data = await getAllPlaces();
       setPlaces(Array.isArray(data) ? data : []);
     } catch (error) {
       console.log(
         "Failed to load places:",
-        error.response?.data || error.message,
+        error.response?.data || error.message
       );
     } finally {
       setLoading(false);
     }
   };
 
+  const matchesExperienceFilters = (place) => {
+    if (!experienceFilters) return true;
+
+    const placeTags = place.tags || [];
+
+    const matchesCategories =
+      !experienceFilters.categories ||
+      experienceFilters.categories.includes(place.category);
+
+    const matchesTypes =
+      !experienceFilters.types || experienceFilters.types.includes(place.type);
+
+    const matchesTags =
+      !experienceFilters.tags ||
+      experienceFilters.tags.some((tag) => placeTags.includes(tag));
+
+    const matchesPriceRanges =
+      !experienceFilters.priceRanges ||
+      experienceFilters.priceRanges.includes(place.priceRange);
+
+    const matchesTourismPriority =
+      !experienceFilters.tourismPriority ||
+      place.tourismPriority === experienceFilters.tourismPriority;
+
+    return (
+      matchesCategories &&
+      matchesTypes &&
+      matchesTags &&
+      matchesPriceRanges &&
+      matchesTourismPriority
+    );
+  };
+
   const filteredPlaces = useMemo(() => {
     return places.filter((place) => {
+      const matchesExperience = matchesExperienceFilters(place);
+
       const matchesType = activeType === "all" || place.type === activeType;
 
-      const text = `${place.name} ${place.region} ${place.city || ""} ${
-        place.area || ""
-      } ${place.shortDescription || ""}`.toLowerCase();
+      const text = `${place.name || ""} ${place.region || ""} ${
+        place.city || ""
+      } ${place.area || ""} ${place.category || ""} ${
+        place.shortDescription || ""
+      } ${(place.tags || []).join(" ")}`.toLowerCase();
 
       const matchesSearch = text.includes(search.toLowerCase());
 
-      return matchesType && matchesSearch;
+      return matchesExperience && matchesType && matchesSearch;
     });
-  }, [places, activeType, search]);
+  }, [places, activeType, search, experienceFilters]);
+
+  const clearExperienceFilter = () => {
+    navigation.setParams({
+      experienceTitle: undefined,
+      filters: undefined,
+    });
+  };
 
   const renderPlace = ({ item }) => (
     <TouchableOpacity
       style={styles.placeCard}
       onPress={() => navigation.navigate("PlaceDetails", { slug: item.slug })}
     >
-      <Text style={styles.placeType}>{item.type}</Text>
+      <Text style={styles.placeType}>{item.category || item.type}</Text>
+
       <Text style={styles.placeName}>{item.name}</Text>
+
       <Text style={styles.placeLocation}>
         {item.city || item.area || item.region}
       </Text>
+
       <Text style={styles.placeDescription} numberOfLines={2}>
         {item.shortDescription}
       </Text>
@@ -82,10 +136,27 @@ export default function DiscoverScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-      <Text style={styles.title}>Discover Ethiopia</Text>
-      <Text style={styles.subtitle}>
-        Search destinations, resorts, lodges, and experiences.
+      <Text style={styles.title}>
+        {experienceTitle || "Discover Ethiopia"}
       </Text>
+
+      <Text style={styles.subtitle}>
+        {experienceTitle
+          ? "Curated places selected for this experience."
+          : "Search destinations, resorts, lodges, and experiences."}
+      </Text>
+
+      {experienceTitle && (
+        <TouchableOpacity
+          style={styles.activeExperienceBox}
+          onPress={clearExperienceFilter}
+        >
+          <Text style={styles.activeExperienceText}>
+            Viewing: {experienceTitle}
+          </Text>
+          <Text style={styles.clearExperienceText}>Clear</Text>
+        </TouchableOpacity>
+      )}
 
       <TextInput
         style={styles.searchInput}
@@ -94,8 +165,12 @@ export default function DiscoverScreen({ navigation }) {
         onChangeText={setSearch}
       />
 
-      <View style={styles.filterRow}>
-        {filters.map((filter) => (
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.filterRow}
+      >
+        {typeFilters.map((filter) => (
           <TouchableOpacity
             key={filter}
             style={[
@@ -114,7 +189,7 @@ export default function DiscoverScreen({ navigation }) {
             </Text>
           </TouchableOpacity>
         ))}
-      </View>
+      </ScrollView>
 
       {loading ? (
         <ActivityIndicator size="large" style={{ marginTop: 30 }} />

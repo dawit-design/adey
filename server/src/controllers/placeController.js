@@ -18,7 +18,18 @@ exports.createPlace = async (req, res) => {
 
 exports.getPlaces = async (req, res) => {
   try {
-    const { type, category, region, featured, q } = req.query;
+    const {
+      type,
+      category,
+      region,
+      featured,
+      q,
+      categories,
+      types,
+      tags,
+      priceRanges,
+      tourismPriority,
+    } = req.query;
 
     const filter = { status: "published" };
 
@@ -26,12 +37,41 @@ exports.getPlaces = async (req, res) => {
     if (category) filter.category = category;
     if (region) filter.region = new RegExp(region, "i");
     if (featured) filter.featured = featured === "true";
+    if (tourismPriority) filter.tourismPriority = tourismPriority;
+
+    if (categories) {
+      filter.category = {
+        $in: categories.split(","),
+      };
+    }
+
+    if (types) {
+      filter.type = {
+        $in: types.split(","),
+      };
+    }
+
+    if (tags) {
+      filter.tags = {
+        $in: tags.split(","),
+      };
+    }
+
+    if (priceRanges) {
+      filter.priceRange = {
+        $in: priceRanges.split(","),
+      };
+    }
 
     if (q) {
       filter.$text = { $search: q };
     }
 
-    const places = await Place.find(filter).sort({ featured: -1, createdAt: -1 });
+    const places = await Place.find(filter).sort({
+      featured: -1,
+      popularityScore: -1,
+      createdAt: -1,
+    });
 
     res.status(200).json(places);
   } catch (error) {

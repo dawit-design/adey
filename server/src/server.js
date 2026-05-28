@@ -7,6 +7,7 @@ const { connectDB } = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const placeRoutes = require("./routes/placeRoutes");
 const savedRoutes = require("./routes/savedRoutes");
+const collectionRoutes = require("./routes/collectionRoutes");
 dotenv.config();
 
 const app = express();
@@ -28,6 +29,7 @@ connectDB(MONGO_URI).then((connected) => {
 app.use("/auth", userRoutes);
 app.use("/api/places", placeRoutes);
 app.use("/saved", savedRoutes);
+app.use("/api/collections", collectionRoutes);
 
 app.get("/", (req, res) => {
   res.json({

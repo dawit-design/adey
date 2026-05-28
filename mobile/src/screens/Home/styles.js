@@ -86,4 +86,89 @@ heartButton: {
     ...globalStyles.bodyTextSmall,
     color: colors.darkGray,
   },
+  kicker: {
+  fontSize: 13,
+  fontWeight: "700",
+  color: colors.accent,
+  textTransform: "uppercase",
+  marginBottom: 8,
+},
+
+experienceList: {
+  paddingVertical: 8,
+  paddingRight: 16,
+},
+
+experienceCard: {
+  width: 190,
+  backgroundColor: colors.white,
+  borderRadius: 18,
+  padding: 16,
+  marginRight: 12,
+  borderWidth: 1,
+  borderColor: "#E5E5E5",
+},
+
+experienceIcon: {
+  width: 42,
+  height: 42,
+  borderRadius: 21,
+  backgroundColor: "#F1F4EA",
+  justifyContent: "center",
+  alignItems: "center",
+  marginBottom: 12,
+},
+
+experienceTitle: {
+  fontSize: 16,
+  fontWeight: "700",
+  color: colors.primary,
+  marginBottom: 6,
+},
+
+experienceSubtitle: {
+  fontSize: 13,
+  color: colors.darkGray,
+  lineHeight: 18,
+},
+collectionList: {
+  paddingVertical: 8,
+  paddingRight: 16,
+},
+
+collectionCard: {
+  width: 240,
+  backgroundColor: colors.primary,
+  borderRadius: 20,
+  padding: 18,
+  marginRight: 14,
+},
+
+collectionLabel: {
+  fontSize: 11,
+  fontWeight: "800",
+  textTransform: "uppercase",
+  color: "#E8EEDB",
+  marginBottom: 10,
+},
+
+collectionTitle: {
+  fontSize: 18,
+  fontWeight: "800",
+  color: colors.white,
+  marginBottom: 8,
+},
+
+collectionSubtitle: {
+  fontSize: 13,
+  color: "#F4F4F4",
+  lineHeight: 18,
+  marginBottom: 14,
+},
+
+collectionMeta: {
+  fontSize: 12,
+  fontWeight: "700",
+  color: "#E8EEDB",
+},
 });
