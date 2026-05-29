@@ -40,36 +40,35 @@ export default function PassportScreen({ navigation }) {
   const visitedPlaces = passport?.visitedPlaces || [];
   const wantToVisitPlaces = passport?.wantToVisitPlaces || [];
 
-  const places =
-    activeTab === "visited"
-      ? visitedPlaces
-      : wantToVisitPlaces;
+  const places = activeTab === "visited" ? visitedPlaces : wantToVisitPlaces;
+
+  const handleBack = () => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.navigate("Home");
+    }
+  };
 
   const renderPlace = ({ item }) => (
     <TouchableOpacity
       style={styles.placeCard}
+      activeOpacity={0.88}
       onPress={() =>
         navigation.navigate("PlaceDetails", {
           slug: item.slug,
         })
       }
     >
-      <Text style={styles.placeType}>
-        {item.category || item.type}
-      </Text>
+      <Text style={styles.placeType}>{item.category || item.type}</Text>
 
-      <Text style={styles.placeName}>
-        {item.name}
-      </Text>
+      <Text style={styles.placeName}>{item.name}</Text>
 
       <Text style={styles.placeLocation}>
         {item.city || item.area || item.region}
       </Text>
 
-      <Text
-        style={styles.placeDescription}
-        numberOfLines={2}
-      >
+      <Text style={styles.placeDescription} numberOfLines={2}>
         {item.shortDescription}
       </Text>
     </TouchableOpacity>
@@ -77,128 +76,96 @@ export default function PassportScreen({ navigation }) {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.center}>
+      <SafeAreaView style={styles.center} edges={["top"]}>
         <ActivityIndicator size="large" />
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView
-      style={styles.container}
-      edges={["top"]}
-    >
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => navigation.goBack()}
-      >
-        <Ionicons
-          name="arrow-back"
-          size={22}
-          color="#556B2F"
+    <SafeAreaView style={styles.container} edges={["top"]}>
+      <View style={styles.hero}>
+        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+          <Ionicons name="arrow-back" size={22} color="#fff" />
+        </TouchableOpacity>
+
+        <View style={styles.heroContent}>
+          <Text style={styles.kicker}>Ethiopia Passport</Text>
+
+          <Text style={styles.title}>
+            Track your journey across Ethiopia
+          </Text>
+
+          <Text style={styles.subtitle}>
+            Mark places you have visited and build your personal travel story.
+          </Text>
+        </View>
+      </View>
+
+      <View style={styles.content}>
+        <View style={styles.statsRow}>
+          <View style={styles.statCard}>
+            <Text style={styles.statNumber}>{visitedPlaces.length}</Text>
+            <Text style={styles.statLabel}>Visited</Text>
+          </View>
+
+          <View style={styles.statCard}>
+            <Text style={styles.statNumber}>{wantToVisitPlaces.length}</Text>
+            <Text style={styles.statLabel}>Want to Visit</Text>
+          </View>
+        </View>
+
+        <View style={styles.tabRow}>
+          <TouchableOpacity
+            style={[
+              styles.tabButton,
+              activeTab === "visited" && styles.tabButtonActive,
+            ]}
+            onPress={() => setActiveTab("visited")}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === "visited" && styles.tabTextActive,
+              ]}
+            >
+              Visited
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.tabButton,
+              activeTab === "wantToVisit" && styles.tabButtonActive,
+            ]}
+            onPress={() => setActiveTab("wantToVisit")}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === "wantToVisit" && styles.tabTextActive,
+              ]}
+            >
+              Want to Visit
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <FlatList
+          data={places}
+          keyExtractor={(item) => item._id}
+          renderItem={renderPlace}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.listContent}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>
+              {activeTab === "visited"
+                ? "No visited places yet."
+                : "No places added yet."}
+            </Text>
+          }
         />
-        <Text style={styles.backText}>
-          Back
-        </Text>
-      </TouchableOpacity>
-
-      <Text style={styles.kicker}>
-        Ethiopia Passport
-      </Text>
-
-      <Text style={styles.title}>
-        Track your journey across Ethiopia
-      </Text>
-
-      <Text style={styles.subtitle}>
-        Mark places you have visited and
-        build your personal travel story.
-      </Text>
-
-      <View style={styles.statsRow}>
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>
-            {visitedPlaces.length}
-          </Text>
-
-          <Text style={styles.statLabel}>
-            Visited
-          </Text>
-        </View>
-
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>
-            {wantToVisitPlaces.length}
-          </Text>
-
-          <Text style={styles.statLabel}>
-            Want to Visit
-          </Text>
-        </View>
       </View>
-
-      <View style={styles.tabRow}>
-        <TouchableOpacity
-          style={[
-            styles.tabButton,
-            activeTab === "visited" &&
-              styles.tabButtonActive,
-          ]}
-          onPress={() =>
-            setActiveTab("visited")
-          }
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === "visited" &&
-                styles.tabTextActive,
-            ]}
-          >
-            Visited
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.tabButton,
-            activeTab ===
-              "wantToVisit" &&
-              styles.tabButtonActive,
-          ]}
-          onPress={() =>
-            setActiveTab("wantToVisit")
-          }
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab ===
-                "wantToVisit" &&
-                styles.tabTextActive,
-            ]}
-          >
-            Want to Visit
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <FlatList
-        data={places}
-        keyExtractor={(item) => item._id}
-        renderItem={renderPlace}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={
-          styles.listContent
-        }
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>
-            {activeTab === "visited"
-              ? "No visited places yet."
-              : "No places added yet."}
-          </Text>
-        }
-      />
     </SafeAreaView>
   );
 }

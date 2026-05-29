@@ -15,16 +15,37 @@ export default StyleSheet.create({
   },
 
   header: {
-    paddingTop: 64,
-    paddingHorizontal: 20,
-    paddingBottom: 24,
-    backgroundColor: colors.primary,
-    borderBottomLeftRadius: 28,
-    borderBottomRightRadius: 28,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-  },
+  paddingTop: 64,
+  paddingHorizontal: 20,
+  paddingBottom: 24,
+  backgroundColor: colors.primary,
+  borderBottomLeftRadius: 28,
+  borderBottomRightRadius: 28,
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "flex-start",
+  position: "relative",
+},
+
+mainBackButton: {
+  position: "absolute",
+  top: 18,
+  left: 20,
+  zIndex: 10,
+  flexDirection: "row",
+  alignItems: "center",
+  gap: 5,
+  backgroundColor: "rgba(255,255,255,0.18)",
+  paddingHorizontal: 12,
+  paddingVertical: 8,
+  borderRadius: 20,
+},
+
+mainBackText: {
+  fontSize: 14,
+  color: colors.white,
+  fontWeight: "800",
+},
 
   eyebrow: {
     color: colors.accent,

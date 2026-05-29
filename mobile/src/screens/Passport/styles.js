@@ -5,8 +5,6 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.lightGray,
-    paddingHorizontal: 20,
-    paddingTop: 48,
   },
 
   center: {
@@ -16,24 +14,62 @@ export default StyleSheet.create({
     justifyContent: "center",
   },
 
+  hero: {
+    backgroundColor: colors.primary,
+    paddingTop: 64,
+    paddingHorizontal: 20,
+    paddingBottom: 24,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
+    position: "relative",
+  },
+
+  backButton: {
+    position: "absolute",
+    top: 18,
+    left: 20,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: "rgba(255,255,255,0.18)",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 10,
+  },
+
+  heroContent: {
+    marginTop: 4,
+  },
+
   kicker: {
     fontSize: 12,
-    fontWeight: "800",
+    fontWeight: "900",
     color: colors.accent,
     textTransform: "uppercase",
+    letterSpacing: 1,
     marginBottom: 8,
   },
 
   title: {
-    ...globalStyles.headingLarge,
-    color: colors.primary,
+    color: colors.white,
+    fontSize: 31,
+    fontWeight: "900",
+    lineHeight: 36,
+    maxWidth: 300,
     marginBottom: 8,
   },
 
   subtitle: {
-    ...globalStyles.bodyTextSmall,
-    color: colors.darkGray,
-    marginBottom: 18,
+    color: "#F1F4EA",
+    fontSize: 15,
+    lineHeight: 22,
+    maxWidth: 310,
+  },
+
+  content: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 18,
   },
 
   statsRow: {
@@ -132,17 +168,5 @@ export default StyleSheet.create({
     textAlign: "center",
     color: colors.darkGray,
     marginTop: 36,
-  },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 18,
-  },
-
-  backText: {
-    marginLeft: 6,
-    fontSize: 15,
-    fontWeight: "700",
-    color: colors.primary,
   },
 });

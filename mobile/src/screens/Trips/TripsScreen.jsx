@@ -10,6 +10,7 @@ import {
   Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import styles from "./styles";
 import { colors } from "../../styles/theme";
@@ -56,6 +57,12 @@ export default function TripsScreen({ navigation, route }) {
   const goBackFromTripDetails = () => {
     setSelectedTrip(null);
     setLastSelectedTripId(null);
+  };
+
+  const goBackFromMainTrips = () => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    }
   };
 
   const handleCreateTrip = async () => {
@@ -149,107 +156,119 @@ export default function TripsScreen({ navigation, route }) {
 
   if (loading) {
     return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" />
-      </View>
+      <SafeAreaView style={styles.container} edges={["top"]}>
+        <View style={styles.center}>
+          <ActivityIndicator size="large" />
+        </View>
+      </SafeAreaView>
     );
   }
 
   if (selectedTrip) {
     return (
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <View style={styles.detailHero}>
-          <TouchableOpacity style={styles.backButton} onPress={goBackFromTripDetails}>
-            <Ionicons name="arrow-back" size={22} color="#fff" />
-          </TouchableOpacity>
+      <SafeAreaView style={styles.container} edges={["top"]}>
+        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+          <View style={styles.detailHero}>
+            <TouchableOpacity style={styles.backButton} onPress={goBackFromTripDetails}>
+              <Ionicons name="arrow-back" size={22} color="#fff" />
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.deleteButton}
-            onPress={() => confirmDeleteTrip(selectedTrip._id)}
-          >
-            <Ionicons name="trash-outline" size={21} color="#fff" />
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => confirmDeleteTrip(selectedTrip._id)}
+            >
+              <Ionicons name="trash-outline" size={21} color="#fff" />
+            </TouchableOpacity>
 
-          <View style={styles.detailHeroContent}>
-            <Text style={styles.detailEyebrow}>ADEY TRIP</Text>
-            <Text style={styles.detailTitle}>{selectedTrip.title}</Text>
+            <View style={styles.detailHeroContent}>
+              <Text style={styles.detailEyebrow}>ADEY TRIP</Text>
+              <Text style={styles.detailTitle}>{selectedTrip.title}</Text>
 
-            <View style={styles.detailMetaRow}>
-              <Ionicons name="location-outline" size={16} color="#fff" />
-              <Text style={styles.detailMetaText}>
-                {selectedTrip.places?.length || 0} places
-              </Text>
+              <View style={styles.detailMetaRow}>
+                <Ionicons name="location-outline" size={16} color="#fff" />
+                <Text style={styles.detailMetaText}>
+                  {selectedTrip.places?.length || 0} places
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
 
-        <View style={styles.detailContent}>
-          <View style={styles.summaryCard}>
-            <Text style={styles.summaryTitle}>Trip overview</Text>
-            <Text style={styles.summaryText}>
-              {selectedTrip.description ||
-                "A simple collection of places you want to explore across Ethiopia."}
-            </Text>
-          </View>
+          <View style={styles.detailContent}>
+            <View style={styles.summaryCard}>
+              <Text style={styles.summaryTitle}>Trip overview</Text>
+              <Text style={styles.summaryText}>
+                {selectedTrip.description ||
+                  "A simple collection of places you want to explore across Ethiopia."}
+              </Text>
+            </View>
 
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Places in this trip</Text>
-            <Text style={styles.sectionCount}>
-              {selectedTrip.places?.length || 0}
-            </Text>
-          </View>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Places in this trip</Text>
+              <Text style={styles.sectionCount}>
+                {selectedTrip.places?.length || 0}
+              </Text>
+            </View>
 
-          {selectedTrip.places?.length > 0 ? (
-            selectedTrip.places.map((item) => {
-              const place = item.place;
+            {selectedTrip.places?.length > 0 ? (
+              selectedTrip.places.map((item) => {
+                const place = item.place;
 
-              if (!place) return null;
+                if (!place) return null;
 
-              return (
-                <TouchableOpacity
-                  key={place._id}
-                  style={styles.placeCard}
-                  activeOpacity={0.85}
-                  onPress={() => openPlaceDetail(place)}
-                >
-                  <View style={styles.placeIcon}>
-                    <Ionicons name="map-outline" size={22} color={colors.primary} />
-                  </View>
-
-                  <View style={styles.placeInfo}>
-                    <Text style={styles.placeName}>{place.name}</Text>
-                    <Text style={styles.placeLocation}>
-                      {place.city || place.area || place.region || "Ethiopia"}
-                    </Text>
-                  </View>
-
+                return (
                   <TouchableOpacity
-                    style={styles.removePlaceButton}
-                    onPress={() => confirmRemovePlace(place._id)}
+                    key={place._id}
+                    style={styles.placeCard}
+                    activeOpacity={0.85}
+                    onPress={() => openPlaceDetail(place)}
                   >
-                    <Ionicons name="close" size={18} color="#A54B4B" />
+                    <View style={styles.placeIcon}>
+                      <Ionicons name="map-outline" size={22} color={colors.primary} />
+                    </View>
+
+                    <View style={styles.placeInfo}>
+                      <Text style={styles.placeName}>{place.name}</Text>
+                      <Text style={styles.placeLocation}>
+                        {place.city || place.area || place.region || "Ethiopia"}
+                      </Text>
+                    </View>
+
+                    <TouchableOpacity
+                      style={styles.removePlaceButton}
+                      onPress={() => confirmRemovePlace(place._id)}
+                    >
+                      <Ionicons name="close" size={18} color="#A54B4B" />
+                    </TouchableOpacity>
                   </TouchableOpacity>
-                </TouchableOpacity>
-              );
-            })
-          ) : (
-            <View style={styles.emptyPlacesCard}>
-              <Ionicons name="map-outline" size={30} color={colors.primary} />
-              <Text style={styles.emptyPlacesTitle}>No places yet</Text>
-              <Text style={styles.emptyPlacesText}>
-                Open a destination page and tap Add to Trip.
-              </Text>
-            </View>
-          )}
-        </View>
-      </ScrollView>
+                );
+              })
+            ) : (
+              <View style={styles.emptyPlacesCard}>
+                <Ionicons name="map-outline" size={30} color={colors.primary} />
+                <Text style={styles.emptyPlacesTitle}>No places yet</Text>
+                <Text style={styles.emptyPlacesText}>
+                  Open a destination page and tap Add to Trip.
+                </Text>
+              </View>
+            )}
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 
   return (
-    <>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.mainBackButton}
+            onPress={goBackFromMainTrips}
+          >
+            <Ionicons name="arrow-back" size={20} color={colors.white} />
+            <Text style={styles.mainBackText}>Back</Text>
+          </TouchableOpacity>
+
           <View>
             <Text style={styles.eyebrow}>ADEY TRIPS</Text>
             <Text style={styles.title}>Your Ethiopia Journeys</Text>
@@ -387,6 +406,6 @@ export default function TripsScreen({ navigation, route }) {
           </View>
         </View>
       </Modal>
-    </>
+    </SafeAreaView>
   );
 }

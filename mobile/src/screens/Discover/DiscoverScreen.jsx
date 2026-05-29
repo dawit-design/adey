@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
+  View,
   Text,
   TextInput,
   TouchableOpacity,
@@ -8,9 +9,11 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import styles from "./styles";
-import { getAllPlaces } from "../../services/placeService";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+import styles from "./styles";
+import { colors } from "../../styles/theme";
+import { getAllPlaces } from "../../services/placeService";
 
 const typeFilters = [
   "all",
@@ -47,7 +50,7 @@ export default function DiscoverScreen({ navigation, route }) {
     } catch (error) {
       console.log(
         "Failed to load places:",
-        error.response?.data || error.message,
+        error.response?.data || error.message
       );
     } finally {
       setLoading(false);
@@ -70,7 +73,7 @@ export default function DiscoverScreen({ navigation, route }) {
 
     if (experienceFilters.tags) {
       checks.push(
-        experienceFilters.tags.some((tag) => placeTags.includes(tag)),
+        experienceFilters.tags.some((tag) => placeTags.includes(tag))
       );
     }
 
@@ -95,7 +98,7 @@ export default function DiscoverScreen({ navigation, route }) {
       } ${place.area || ""} ${place.category || ""} ${
         place.type || ""
       } ${place.shortDescription || ""} ${(place.tags || []).join(
-        " ",
+        " "
       )}`.toLowerCase();
 
       const matchesSearch = text.includes(search.toLowerCase());
@@ -114,9 +117,18 @@ export default function DiscoverScreen({ navigation, route }) {
     setSearch("");
   };
 
+  const handleBack = () => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.navigate("Home");
+    }
+  };
+
   const renderPlace = ({ item }) => (
     <TouchableOpacity
       style={styles.placeCard}
+      activeOpacity={0.88}
       onPress={() => navigation.navigate("PlaceDetails", { slug: item.slug })}
     >
       <Text style={styles.placeType}>{item.category || item.type}</Text>
@@ -135,79 +147,83 @@ export default function DiscoverScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => navigation.goBack()}
-      >
-        <Ionicons name="arrow-back" size={22} color="#556B2F" />
-        <Text style={styles.backText}>Back</Text>
-      </TouchableOpacity>
-      <Text style={styles.title}>{experienceTitle || "Discover Ethiopia"}</Text>
-      <Text style={styles.subtitle}>
-        {experienceTitle
-          ? `${filteredPlaces.length} curated places for this experience.`
-          : "Search destinations, resorts, lodges, and experiences."}
-      </Text>
-
-      {experienceTitle && (
-        <TouchableOpacity
-          style={styles.activeExperienceBox}
-          onPress={clearExperienceFilter}
-        >
-          <Text style={styles.activeExperienceText}>
-            Viewing: {experienceTitle}
-          </Text>
-          <Text style={styles.clearExperienceText}>Clear</Text>
+      <View style={styles.hero}>
+        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+          <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
-      )}
 
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Search places..."
-        value={search}
-        onChangeText={setSearch}
-      />
+        <View style={styles.heroContent}>
+          <Text style={styles.eyebrow}>ADEY DISCOVER</Text>
+          <Text style={styles.title}>{experienceTitle || "Discover Ethiopia"}</Text>
+          <Text style={styles.subtitle}>
+            {experienceTitle
+              ? `${filteredPlaces.length} curated places for this experience.`
+              : "Search destinations, resorts, lodges, and experiences."}
+          </Text>
+        </View>
+      </View>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.filterRow}
-      >
-        {typeFilters.map((filter) => (
+      <View style={styles.content}>
+        {experienceTitle && (
           <TouchableOpacity
-            key={filter}
-            style={[
-              styles.filterChip,
-              activeType === filter && styles.filterChipActive,
-            ]}
-            onPress={() => setActiveType(filter)}
+            style={styles.activeExperienceBox}
+            onPress={clearExperienceFilter}
           >
-            <Text
-              style={[
-                styles.filterText,
-                activeType === filter && styles.filterTextActive,
-              ]}
-            >
-              {filter}
+            <Text style={styles.activeExperienceText}>
+              Viewing: {experienceTitle}
             </Text>
+            <Text style={styles.clearExperienceText}>Clear</Text>
           </TouchableOpacity>
-        ))}
-      </ScrollView>
+        )}
 
-      {loading ? (
-        <ActivityIndicator size="large" style={{ marginTop: 30 }} />
-      ) : (
-        <FlatList
-          data={filteredPlaces}
-          keyExtractor={(item) => item._id}
-          renderItem={renderPlace}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
-          ListEmptyComponent={
-            <Text style={styles.emptyText}>No places found.</Text>
-          }
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search places..."
+          value={search}
+          onChangeText={setSearch}
         />
-      )}
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterRow}
+        >
+          {typeFilters.map((filter) => (
+            <TouchableOpacity
+              key={filter}
+              style={[
+                styles.filterChip,
+                activeType === filter && styles.filterChipActive,
+              ]}
+              onPress={() => setActiveType(filter)}
+            >
+              <Text
+                style={[
+                  styles.filterText,
+                  activeType === filter && styles.filterTextActive,
+                ]}
+              >
+                {filter}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        {loading ? (
+          <ActivityIndicator size="large" style={{ marginTop: 30 }} />
+        ) : (
+          <FlatList
+            data={filteredPlaces}
+            keyExtractor={(item) => item._id}
+            renderItem={renderPlace}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.listContent}
+            ListEmptyComponent={
+              <Text style={styles.emptyText}>No places found.</Text>
+            }
+          />
+        )}
+      </View>
     </SafeAreaView>
   );
 }
