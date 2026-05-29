@@ -9,6 +9,7 @@ const placeRoutes = require("./routes/placeRoutes");
 const savedRoutes = require("./routes/savedRoutes");
 const collectionRoutes = require("./routes/collectionRoutes");
 const passportRoutes = require("./routes/passportRoutes");
+const tripRoutes = require("./routes/tripRoutes");
 dotenv.config();
 
 const app = express();
@@ -32,6 +33,7 @@ app.use("/api/places", placeRoutes);
 app.use("/saved", savedRoutes);
 app.use("/api/collections", collectionRoutes);
 app.use("/api/passport", passportRoutes);
+app.use("/api/trips", tripRoutes);
 
 app.get("/", (req, res) => {
   res.json({
