@@ -5,63 +5,20 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.lightGray,
-  },
-
-  hero: {
-    backgroundColor: colors.primary,
-    paddingTop: 64,
     paddingHorizontal: 20,
-    paddingBottom: 24,
-    borderBottomLeftRadius: 28,
-    borderBottomRightRadius: 28,
-    position: "relative",
-  },
-
-  backButton: {
-    position: "absolute",
-    top: 18,
-    left: 20,
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: "rgba(255,255,255,0.18)",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 10,
-  },
-
-  heroContent: {
-    marginTop: 4,
-  },
-
-  eyebrow: {
-    color: colors.accent,
-    fontSize: 12,
-    fontWeight: "900",
-    letterSpacing: 1,
-    marginBottom: 8,
+    paddingTop: 56,
   },
 
   title: {
-    color: colors.white,
-    fontSize: 31,
-    fontWeight: "900",
-    lineHeight: 36,
-    maxWidth: 300,
-    marginBottom: 6,
+    ...globalStyles.headingLarge,
+    color: colors.primary,
+    marginBottom: 4,
   },
 
   subtitle: {
-    color: "#F1F4EA",
-    fontSize: 15,
-    lineHeight: 22,
-    maxWidth: 300,
-  },
-
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 18,
+    ...globalStyles.bodyTextSmall,
+    color: colors.darkGray,
+    marginBottom: 18,
   },
 
   searchInput: {
@@ -73,33 +30,35 @@ export default StyleSheet.create({
 
   filterRow: {
     flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
+    marginBottom: 14,
     paddingBottom: 20,
   },
 
   filterChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.borderGray,
-    minHeight: 36,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  paddingHorizontal: 12,
+  paddingVertical: 8,
+  borderRadius: 20,
+  backgroundColor: colors.white,
+  borderWidth: 1,
+  borderColor: colors.borderGray,
+  minHeight: 36,
+  justifyContent: "center",
+  alignItems: "center",
+},
 
   filterChipActive: {
     backgroundColor: colors.primary,
     borderColor: colors.primary,
   },
 
-  filterText: {
-    fontSize: 13,
-    color: "#333333",
-    textTransform: "capitalize",
-    fontWeight: "600",
-  },
+ filterText: {
+  fontSize: 13,
+  color: "#333333",
+  textTransform: "capitalize",
+  fontWeight: "600",
+},
 
   filterTextActive: {
     color: colors.white,
@@ -113,7 +72,18 @@ export default StyleSheet.create({
     ...globalStyles.card,
     marginVertical: 8,
   },
+ backButton: {
+  flexDirection: "row",
+  alignItems: "center",
+  marginBottom: 18,
+},
 
+backText: {
+  marginLeft: 6,
+  fontSize: 15,
+  fontWeight: "700",
+  color: colors.primary,
+},
   placeType: {
     fontSize: 12,
     textTransform: "uppercase",
@@ -144,24 +114,24 @@ export default StyleSheet.create({
     color: colors.darkGray,
     marginTop: 40,
   },
-
   activeExperienceBox: {
-    backgroundColor: "#F1F4EA",
-    borderRadius: 14,
-    padding: 12,
-    marginBottom: 12,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
+  backgroundColor: "#F1F4EA",
+  borderRadius: 14,
+  padding: 12,
+  marginTop: 12,
+  marginBottom: 12,
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
+},
 
-  activeExperienceText: {
-    color: colors.primary,
-    fontWeight: "700",
-  },
+activeExperienceText: {
+  color: colors.primary,
+  fontWeight: "700",
+},
 
-  clearExperienceText: {
-    color: colors.accent,
-    fontWeight: "700",
-  },
+clearExperienceText: {
+  color: colors.accent,
+  fontWeight: "700",
+},
 });
