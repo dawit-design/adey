@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
   ScrollView,
 } from "react-native";
-
+import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
 import { getAllPlaces } from "../../services/placeService";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -47,7 +47,7 @@ export default function DiscoverScreen({ navigation, route }) {
     } catch (error) {
       console.log(
         "Failed to load places:",
-        error.response?.data || error.message
+        error.response?.data || error.message,
       );
     } finally {
       setLoading(false);
@@ -70,7 +70,7 @@ export default function DiscoverScreen({ navigation, route }) {
 
     if (experienceFilters.tags) {
       checks.push(
-        experienceFilters.tags.some((tag) => placeTags.includes(tag))
+        experienceFilters.tags.some((tag) => placeTags.includes(tag)),
       );
     }
 
@@ -95,7 +95,7 @@ export default function DiscoverScreen({ navigation, route }) {
       } ${place.area || ""} ${place.category || ""} ${
         place.type || ""
       } ${place.shortDescription || ""} ${(place.tags || []).join(
-        " "
+        " ",
       )}`.toLowerCase();
 
       const matchesSearch = text.includes(search.toLowerCase());
@@ -135,8 +135,14 @@ export default function DiscoverScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Ionicons name="arrow-back" size={22} color="#556B2F" />
+        <Text style={styles.backText}>Back</Text>
+      </TouchableOpacity>
       <Text style={styles.title}>{experienceTitle || "Discover Ethiopia"}</Text>
-
       <Text style={styles.subtitle}>
         {experienceTitle
           ? `${filteredPlaces.length} curated places for this experience.`

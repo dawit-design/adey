@@ -72,7 +72,18 @@ export default StyleSheet.create({
     ...globalStyles.card,
     marginVertical: 8,
   },
+ backButton: {
+  flexDirection: "row",
+  alignItems: "center",
+  marginBottom: 18,
+},
 
+backText: {
+  marginLeft: 6,
+  fontSize: 15,
+  fontWeight: "700",
+  color: colors.primary,
+},
   placeType: {
     fontSize: 12,
     textTransform: "uppercase",

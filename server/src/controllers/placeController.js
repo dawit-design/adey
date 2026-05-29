@@ -1,5 +1,6 @@
 const Place = require("../models/Place");
 const slugify = require("../utils/slugify");
+const cloudinary = require("../config/cloudinary");
 
 exports.createPlace = async (req, res) => {
   try {
@@ -126,6 +127,38 @@ exports.deletePlace = async (req, res) => {
     }
 
     res.status(200).json({ message: "Place deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.uploadPlaceImage = async (req, res) => {
+  try {
+    const { imageType } = req.body; // "cover" or "gallery"
+
+    if (!req.file) {
+      return res.status(400).json({ message: "No image uploaded" });
+    }
+
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "places",
+    });
+
+    const place = await Place.findById(req.params.id);
+
+    if (!place) {
+      return res.status(404).json({ message: "Place not found" });
+    }
+
+    if (imageType === "cover") {
+      place.coverImage = result.secure_url;
+    } else {
+      place.images.push(result.secure_url);
+    }
+
+    await place.save();
+
+    res.status(200).json(place);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

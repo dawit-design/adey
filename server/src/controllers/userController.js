@@ -9,6 +9,7 @@ const generateToken = (id) => {
 
 const sanitizeUser = (user) => {
   if (!user) return null;
+
   const {
     password_hash,
     email_verification_token,
@@ -18,7 +19,15 @@ const sanitizeUser = (user) => {
     __v,
     ...clean
   } = user.toObject();
+
   return clean;
+};
+
+const findActiveUserById = async (id) => {
+  return User.findOne({
+    _id: id,
+    account_status: { $ne: "deleted" },
+  });
 };
 
 exports.registerUser = async (req, res) => {
@@ -26,25 +35,34 @@ exports.registerUser = async (req, res) => {
     const { username, email, password, full_name } = req.body;
 
     if (!username || !email || !password || !full_name) {
-      return res.status(400).json({ message: "All required fields must be provided" });
+      return res.status(400).json({
+        message: "All required fields must be provided",
+      });
     }
 
     const existingUser = await User.findOne({
-      $or: [{ email: email.toLowerCase() }, { username: username.toLowerCase() }],
+      $or: [
+        { email: email.toLowerCase() },
+        { username: username.toLowerCase() },
+      ],
+      account_status: { $ne: "deleted" },
     });
 
     if (existingUser) {
-      return res.status(400).json({ message: "Username or email already exists" });
+      return res.status(400).json({
+        message: "Username or email already exists",
+      });
     }
 
     const user = await User.create({
-      username,
-      email,
+      username: username.toLowerCase(),
+      email: email.toLowerCase(),
       password_hash: password,
       full_name,
     });
 
     const token = generateToken(user._id);
+
     return res.status(201).json({
       token,
       user: sanitizeUser(user),
@@ -57,16 +75,31 @@ exports.registerUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
+
     if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
+      return res.status(400).json({
+        message: "Email and password are required",
+      });
     }
 
-    const user = await User.findOne({ email: email.toLowerCase() }).select("+password_hash");
+    const user = await User.findOne({
+      email: email.toLowerCase(),
+    }).select("+password_hash");
+
     if (!user || !(await user.matchPassword(password))) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({
+        message: "Invalid credentials",
+      });
+    }
+
+    if (user.account_status === "deleted") {
+      return res.status(403).json({
+        message: "This account has been deleted.",
+      });
     }
 
     const token = generateToken(user._id);
+
     return res.json({
       token,
       user: sanitizeUser(user),
@@ -76,9 +109,28 @@ exports.loginUser = async (req, res) => {
   }
 };
 
+exports.getCurrentUser = async (req, res) => {
+  try {
+    const user = await findActiveUserById(req.user.id);
+
+    if (!user) {
+      return res.status(401).json({
+        message: "Account no longer exists",
+      });
+    }
+
+    return res.json(sanitizeUser(user));
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({ account_status: { $ne: "deleted" } });
+    const users = await User.find({
+      account_status: { $ne: "deleted" },
+    });
+
     return res.json(users.map(sanitizeUser));
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -87,10 +139,14 @@ exports.getAllUsers = async (req, res) => {
 
 exports.getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
-    if (!user || user.account_status === "deleted") {
-      return res.status(404).json({ message: "User not found" });
+    const user = await findActiveUserById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
     }
+
     return res.json(sanitizeUser(user));
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -102,20 +158,28 @@ exports.createUser = async (req, res) => {
     const { username, email, password, full_name, phone_number } = req.body;
 
     if (!username || !email || !password || !full_name) {
-      return res.status(400).json({ message: "Missing required fields" });
+      return res.status(400).json({
+        message: "Missing required fields",
+      });
     }
 
     const existingUser = await User.findOne({
-      $or: [{ email: email.toLowerCase() }, { username: username.toLowerCase() }],
+      $or: [
+        { email: email.toLowerCase() },
+        { username: username.toLowerCase() },
+      ],
+      account_status: { $ne: "deleted" },
     });
 
     if (existingUser) {
-      return res.status(400).json({ message: "Username or email already exists" });
+      return res.status(400).json({
+        message: "Username or email already exists",
+      });
     }
 
     const user = await User.create({
-      username,
-      email,
+      username: username.toLowerCase(),
+      email: email.toLowerCase(),
       password_hash: password,
       full_name,
       phone_number,
@@ -145,27 +209,40 @@ exports.updateUserById = async (req, res) => {
     ];
 
     const updates = {};
+
     allowed.forEach((field) => {
       if (req.body[field] !== undefined) {
         updates[field] = req.body[field];
       }
     });
 
-    const user = await User.findById(req.params.id);
-    if (!user || user.account_status === "deleted") {
-      return res.status(404).json({ message: "User not found" });
+    const user = await findActiveUserById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
     }
 
     Object.assign(user, updates);
 
     if (
-      ["profile_photo", "date_of_birth", "gender", "nationality", "country_of_residence", "preferred_language", "preferred_currency", "timezone"]
-        .some((field) => updates[field] !== undefined)
+      [
+        "profile_photo",
+        "date_of_birth",
+        "gender",
+        "nationality",
+        "country_of_residence",
+        "preferred_language",
+        "preferred_currency",
+        "timezone",
+      ].some((field) => updates[field] !== undefined)
     ) {
       user.updateProfileCompletion();
     }
 
     await user.save();
+
     return res.json(sanitizeUser(user));
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -174,25 +251,22 @@ exports.updateUserById = async (req, res) => {
 
 exports.deleteUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
-    if (!user || user.account_status === "deleted") {
-      return res.status(404).json({ message: "User not found" });
+    const user = await findActiveUserById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
     }
 
-    await user.remove();
-    return res.json({ message: "User deleted successfully" });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-};
+    user.account_status = "deleted";
+    user.deletedAt = new Date();
 
-exports.getCurrentUser = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-    if (!user || user.account_status === "deleted") {
-      return res.status(404).json({ message: "User not found" });
-    }
-    return res.json(sanitizeUser(user));
+    await user.save();
+
+    return res.json({
+      message: "User deleted successfully",
+    });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -200,8 +274,13 @@ exports.getCurrentUser = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    const user = await findActiveUserById(req.user.id);
+
+    if (!user) {
+      return res.status(401).json({
+        message: "Account no longer exists",
+      });
+    }
 
     const profileFields = [
       "full_name",
@@ -223,7 +302,9 @@ exports.updateProfile = async (req, res) => {
     });
 
     user.updateProfileCompletion();
+
     await user.save();
+
     return res.json(sanitizeUser(user));
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -233,18 +314,31 @@ exports.updateProfile = async (req, res) => {
 exports.changePassword = async (req, res) => {
   try {
     const { current_password, new_password } = req.body;
+
     if (!current_password || !new_password) {
-      return res.status(400).json({ message: "Current and new passwords are required" });
+      return res.status(400).json({
+        message: "Current and new passwords are required",
+      });
     }
 
-    const user = await User.findById(req.user.id).select("+password_hash");
+    const user = await User.findOne({
+      _id: req.user.id,
+      account_status: { $ne: "deleted" },
+    }).select("+password_hash");
+
     if (!user || !(await user.matchPassword(current_password))) {
-      return res.status(401).json({ message: "Invalid current password" });
+      return res.status(401).json({
+        message: "Invalid current password",
+      });
     }
 
     user.password_hash = new_password;
+
     await user.save();
-    return res.json({ message: "Password updated successfully" });
+
+    return res.json({
+      message: "Password updated successfully",
+    });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -252,13 +346,29 @@ exports.changePassword = async (req, res) => {
 
 exports.deleteAccount = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    const userId = req.user.id || req.user._id;
+
+    const user = await findActiveUserById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found or already deleted",
+      });
+    }
 
     user.account_status = "deleted";
+    user.deletedAt = new Date();
+
     await user.save();
-    return res.json({ message: "Account deleted successfully" });
+
+    return res.status(200).json({
+      message: "Account deleted successfully",
+    });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    console.log("Delete account error:", error);
+
+    return res.status(500).json({
+      message: error.message,
+    });
   }
 };

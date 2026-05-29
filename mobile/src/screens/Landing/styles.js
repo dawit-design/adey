@@ -1,49 +1,65 @@
-import { StyleSheet, Platform } from 'react-native';
-import { colors, globalStyles } from '../../styles/theme';
+import { StyleSheet, Platform } from "react-native";
+import { colors } from "../../styles/theme";
 
 export default StyleSheet.create({
+  keyboardAvoid: {
+    flex: 1,
+    backgroundColor: colors.lightGray,
+  },
+
+  scrollContainer: {
+    flexGrow: 1,
+  },
+
   container: {
     flex: 1,
     backgroundColor: colors.lightGray,
-    paddingHorizontal: 24,
-    paddingTop: Platform.OS === 'ios' ? 50 : 36,
-    paddingBottom: 24,
+    paddingHorizontal: 22,
+    paddingTop: Platform.OS === "ios" ? 56 : 42,
+    paddingBottom: 28,
+    justifyContent: "center",
   },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
+
+  brandSection: {
+    alignItems: "center",
+    marginBottom: 30,
   },
-  logoContainer: {
-    alignItems: 'center',
-    marginBottom: 34,
-  },
+
   logo: {
-    width: 130,
-    height: 130,
-    borderRadius: 28,
+    width: 220,
+    height: 220,
+    marginBottom: 10,
   },
-  welcomeSection: {
-    alignItems: 'center',
-    marginBottom: 28,
+
+  supportText: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: colors.mediumGray || colors.darkGray,
+    textAlign: "center",
+    paddingHorizontal: 18,
+    maxWidth: 320,
   },
-  title: {
-    ...globalStyles.headingXL,
-    color: colors.primary,
-    marginBottom: 6,
-  },
-  subtitle: {
-    ...globalStyles.bodyText,
-    color: colors.darkGray,
-    textAlign: 'center',
-  },
+
   formContainer: {
     backgroundColor: colors.white,
-    borderRadius: 24,
+    borderRadius: 28,
     padding: 22,
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.08,
-    shadowRadius: 18,
-    elevation: 5,
+    borderWidth: 1,
+    borderColor: colors.borderGray,
+  },
+
+  formTitle: {
+    fontSize: 24,
+    lineHeight: 30,
+    fontWeight: "900",
+    color: colors.primary,
+    marginBottom: 4,
+  },
+
+  formSubtitle: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: colors.mediumGray || colors.darkGray,
+    marginBottom: 14,
   },
 });

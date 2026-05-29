@@ -49,28 +49,46 @@ export default function ProfileScreen({ navigation }) {
   const handleSignOut = async () => {
     await clearAuth();
     setAuthToken(null);
-    navigation.replace("Landing");
+
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Landing" }],
+    });
   };
 
-  const handleDeleteAccount = async () => {
+  const handleDeleteAccount = () => {
     Alert.alert(
       "Delete Account",
       "Are you sure you want to delete your account? This action cannot be undone.",
       [
-        { text: "Cancel", style: "cancel" },
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
         {
           text: "Delete",
           style: "destructive",
           onPress: async () => {
             try {
               setLoading(true);
+
               await deleteAccount();
+
               await clearAuth();
               setAuthToken(null);
-              navigation.replace("Landing");
+
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "Landing" }],
+              });
             } catch (error) {
-              console.error("Delete account failed:", error);
-              Alert.alert("Error", error.response?.data?.message || error.message);
+              console.log("Delete account failed:", error);
+
+              Alert.alert(
+                "Delete Failed",
+                error.response?.data?.message ||
+                  "Unable to delete your account. Please try again."
+              );
             } finally {
               setLoading(false);
             }
@@ -102,20 +120,31 @@ export default function ProfileScreen({ navigation }) {
 
           <View style={styles.headerCard}>
             {user.profile_photo ? (
-              <Image source={{ uri: user.profile_photo }} style={styles.profileImage} />
+              <Image
+                source={{ uri: user.profile_photo }}
+                style={styles.profileImage}
+              />
             ) : (
               <View style={styles.profilePlaceholder}>
                 <Text style={styles.profilePlaceholderText}>
-                  {user.full_name ? user.full_name.charAt(0).toUpperCase() : "?"}
+                  {user.full_name
+                    ? user.full_name.charAt(0).toUpperCase()
+                    : "?"}
                 </Text>
               </View>
             )}
 
             <View style={styles.headerTextBox}>
-              <Text style={styles.fullName}>{user.full_name || "No name set"}</Text>
-              <Text style={styles.username}>@{user.username || "traveler"}</Text>
+              <Text style={styles.fullName}>
+                {user.full_name || "No name set"}
+              </Text>
+              <Text style={styles.username}>
+                @{user.username || "traveler"}
+              </Text>
               <Text style={styles.location}>
-                {user.country_of_residence || user.nationality || "Explorer"}
+                {user.country_of_residence ||
+                  user.nationality ||
+                  "Explorer"}
               </Text>
             </View>
           </View>
@@ -142,6 +171,7 @@ export default function ProfileScreen({ navigation }) {
             <TouchableOpacity
               style={globalStyles.buttonOutline}
               onPress={() => navigation.navigate("EditProfile")}
+              disabled={loading}
             >
               <Text style={globalStyles.buttonOutlineText}>Edit Profile</Text>
             </TouchableOpacity>
@@ -149,6 +179,7 @@ export default function ProfileScreen({ navigation }) {
             <TouchableOpacity
               style={globalStyles.buttonPrimary}
               onPress={handleSignOut}
+              disabled={loading}
             >
               <Text style={globalStyles.buttonPrimaryText}>Sign Out</Text>
             </TouchableOpacity>
@@ -158,9 +189,11 @@ export default function ProfileScreen({ navigation }) {
               onPress={handleDeleteAccount}
               disabled={loading}
             >
-              <Text style={styles.deleteButtonText}>
-                {loading ? "Deleting..." : "Delete Account"}
-              </Text>
+              {loading ? (
+                <ActivityIndicator size="small" color={colors.error} />
+              ) : (
+                <Text style={styles.deleteButtonText}>Delete Account</Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>

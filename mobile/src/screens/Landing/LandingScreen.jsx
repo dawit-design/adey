@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,51 +6,65 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-} from 'react-native';
-import LoginForm from '../../components/LoginForm/LoginForm';
-import RegisterForm from '../../components/RegisterForm/RegisterForm';
-import styles from './styles';
+} from "react-native";
+
+import LoginForm from "../../components/LoginForm/LoginForm";
+import RegisterForm from "../../components/RegisterForm/RegisterForm";
+import styles from "./styles";
 
 export default function LandingScreen({ navigation }) {
-  const [mode, setMode] = useState('login');
+  const [mode, setMode] = useState("login");
 
-  const handleLoginSuccess = (result) => {
-    navigation.replace('Main');
+  const handleLoginSuccess = () => {
+    navigation.replace("Main");
   };
 
   const handleRegisterSuccess = () => {
-    setMode('login');
+    setMode("login");
   };
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.keyboardAvoid}
     >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={styles.container}>
-          <View style={styles.logoContainer}>
+          <View style={styles.brandSection}>
             <Image
-              source={require('../../assets/sixith_version.png')}
+              source={require("../../assets/main-logo1.png")}
               style={styles.logo}
               resizeMode="contain"
             />
-          </View>
 
-          <View style={styles.welcomeSection}>
-            <Text style={styles.title}>Adey Travels</Text>
-            <Text style={styles.subtitle}>Explore Ethiopia like never before</Text>
+            <Text style={styles.supportText}>
+              Curated travel stories and destinations across Ethiopia.
+            </Text>
           </View>
 
           <View style={styles.formContainer}>
-            {mode === 'login' ? (
+            <Text style={styles.formTitle}>
+              {mode === "login" ? "Welcome back" : "Create your account"}
+            </Text>
+
+            <Text style={styles.formSubtitle}>
+              {mode === "login"
+                ? "Sign in to continue exploring."
+                : "Join Adey and start your journey."}
+            </Text>
+
+            {mode === "login" ? (
               <LoginForm
-                onSwitchToRegister={() => setMode('register')}
+                onSwitchToRegister={() => setMode("register")}
                 onLoginSuccess={handleLoginSuccess}
               />
             ) : (
               <RegisterForm
-                onSwitchToLogin={() => setMode('login')}
+                onSwitchToLogin={() => setMode("login")}
                 onRegisterSuccess={handleRegisterSuccess}
               />
             )}
