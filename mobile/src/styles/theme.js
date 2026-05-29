@@ -1,84 +1,152 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 export const colors = {
-  primary: '#556B2F', // Olive Green
-  accent: '#D4AF37', // Golden
-  white: '#FFFFFF',
-  black: '#000000',
-  darkGray: '#333333',
-  lightGray: '#F5F5F5',
-  borderGray: '#E0E0E0',
-  success: '#4CAF50',
-  error: '#F44336',
+  primary: "#556B2F", // Olive Green
+  primaryDark: "#3F5122",
+  primarySoft: "#F1F4EA",
+
+  accent: "#D4AF37", // Gold
+  accentSoft: "#F7EFCB",
+
+  white: "#FFFFFF",
+  black: "#000000",
+
+  text: "#242424",
+  darkGray: "#333333",
+  mediumGray: "#6B6B6B",
+  lightGray: "#F6F6F2",
+  borderGray: "#E3E3DA",
+
+  success: "#4CAF50",
+  error: "#F44336",
+  warning: "#9A6B00",
 };
 
 export const fonts = {
-  primary: 'System', // Fallback
-  accent: 'AbyssinicaSIL', // Ethiopian font (needs to be installed)
-  bold: 'System',
+  primary: "System",
+  accent: "System",
+  bold: "System",
+};
+
+export const radius = {
+  small: 12,
+  medium: 20,
+  large: 28,
+  pill: 999,
+};
+
+export const spacing = {
+  xs: 4,
+  s: 8,
+  m: 16,
+  l: 24,
+  xl: 32,
+};
+
+export const typography = {
+  headingXL: {
+    fontSize: 34,
+    lineHeight: 40,
+    fontWeight: "800",
+  },
+
+  headingLarge: {
+    fontSize: 28,
+    lineHeight: 34,
+    fontWeight: "800",
+  },
+
+  headingMedium: {
+    fontSize: 24,
+    lineHeight: 30,
+    fontWeight: "700",
+  },
+
+  headingSmall: {
+    fontSize: 20,
+    lineHeight: 26,
+    fontWeight: "700",
+  },
+
+  body: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: "400",
+  },
+
+  bodySmall: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "400",
+  },
+
+  label: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: "700",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
+  },
 };
 
 export const globalStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: colors.lightGray,
     paddingHorizontal: 20,
-    justifyContent: 'center',
   },
-  
+
   centerContainer: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: colors.lightGray,
     paddingHorizontal: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   // Typography
   headingXL: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: colors.darkGray,
-    textAlign: 'center',
+    ...typography.headingXL,
+    color: colors.text,
     marginBottom: 12,
   },
 
   headingLarge: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.darkGray,
+    ...typography.headingLarge,
+    color: colors.text,
     marginBottom: 16,
   },
 
   headingMedium: {
-    fontSize: 24,
-    fontWeight: '700',
+    ...typography.headingMedium,
     color: colors.primary,
     marginBottom: 12,
   },
 
   headingSmall: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: colors.darkGray,
+    ...typography.headingSmall,
+    color: colors.text,
     marginBottom: 8,
   },
 
   bodyText: {
-    fontSize: 16,
-    color: colors.darkGray,
-    lineHeight: 24,
+    ...typography.body,
+    color: colors.text,
   },
 
   bodyTextSmall: {
-    fontSize: 14,
-    color: colors.darkGray,
-    lineHeight: 20,
+    ...typography.bodySmall,
+    color: colors.mediumGray,
+  },
+
+  labelText: {
+    ...typography.label,
+    color: colors.accent,
   },
 
   accentText: {
     color: colors.accent,
-    fontWeight: '600',
+    fontWeight: "700",
   },
 
   primaryText: {
@@ -89,64 +157,65 @@ export const globalStyles = StyleSheet.create({
   buttonPrimary: {
     paddingVertical: 14,
     paddingHorizontal: 24,
-    borderRadius: 8,
+    borderRadius: radius.medium,
     backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginVertical: 8,
   },
 
   buttonPrimaryText: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 15,
+    fontWeight: "700",
     color: colors.white,
   },
 
   buttonSecondary: {
     paddingVertical: 14,
     paddingHorizontal: 24,
-    borderRadius: 8,
-    backgroundColor: colors.white,
-    borderWidth: 2,
+    borderRadius: radius.medium,
+    backgroundColor: colors.accentSoft,
+    borderWidth: 1,
     borderColor: colors.accent,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginVertical: 8,
   },
 
   buttonSecondaryText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.accent,
+    fontSize: 15,
+    fontWeight: "700",
+    color: colors.primaryDark,
   },
 
   buttonOutline: {
-    paddingVertical: 12,
+    paddingVertical: 13,
     paddingHorizontal: 20,
-    borderRadius: 8,
+    borderRadius: radius.medium,
     borderWidth: 1.5,
     borderColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: colors.white,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   buttonOutlineText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "700",
     color: colors.primary,
   },
 
   // Inputs
   input: {
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: colors.borderGray,
-    borderRadius: 8,
-    paddingVertical: 12,
+    borderRadius: radius.medium,
+    paddingVertical: 13,
     paddingHorizontal: 16,
     marginVertical: 10,
     fontSize: 16,
-    color: colors.darkGray,
-    backgroundColor: colors.lightGray,
+    color: colors.text,
+    backgroundColor: colors.white,
   },
 
   inputFocused: {
@@ -157,43 +226,49 @@ export const globalStyles = StyleSheet.create({
   // Cards
   card: {
     backgroundColor: colors.white,
-    borderRadius: 12,
+    borderRadius: radius.medium,
     padding: 16,
     marginVertical: 8,
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: colors.borderGray,
+  },
+
+  cardLarge: {
+    backgroundColor: colors.white,
+    borderRadius: radius.large,
+    padding: 20,
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: colors.borderGray,
   },
 
   // Spacing
   spacingXS: {
-    marginVertical: 4,
+    marginVertical: spacing.xs,
   },
 
   spacingS: {
-    marginVertical: 8,
+    marginVertical: spacing.s,
   },
 
   spacingM: {
-    marginVertical: 16,
+    marginVertical: spacing.m,
   },
 
   spacingL: {
-    marginVertical: 24,
+    marginVertical: spacing.l,
   },
 
   // Flex
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
 
   rowSpaceBetween: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 
   // Divider

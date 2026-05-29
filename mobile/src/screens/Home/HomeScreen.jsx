@@ -99,6 +99,22 @@ const EXPERIENCES = [
     },
   },
 ];
+const getDailyRandomPlaces = (places, limit = 6) => {
+  const today = new Date().toISOString().split("T")[0];
+
+  const seed = today
+    .split("")
+    .reduce((sum, char) => sum + char.charCodeAt(0), 0);
+
+  return [...places]
+    .map((place, index) => ({
+      place,
+      sort: Math.sin(seed + index) * 10000,
+    }))
+    .sort((a, b) => a.sort - b.sort)
+    .slice(0, limit)
+    .map((item) => item.place);
+};
 
 export default function HomeScreen({ navigation }) {
   const [featuredPlaces, setFeaturedPlaces] = useState([]);
@@ -111,7 +127,12 @@ export default function HomeScreen({ navigation }) {
       setLoading(true);
 
       const placesData = await getAllPlaces({ featured: true });
-      setFeaturedPlaces(Array.isArray(placesData) ? placesData : []);
+
+      const shuffledPlaces = Array.isArray(placesData)
+        ? getDailyRandomPlaces(placesData, 6)
+        : [];
+
+      setFeaturedPlaces(shuffledPlaces);
 
       const collectionsData = await getFeaturedCollections();
       setCollections(Array.isArray(collectionsData) ? collectionsData : []);
@@ -122,12 +143,15 @@ export default function HomeScreen({ navigation }) {
       } catch (savedError) {
         console.log(
           "Saved IDs not loaded:",
-          savedError.response?.data || savedError.message
+          savedError.response?.data || savedError.message,
         );
         setSavedIds([]);
       }
     } catch (error) {
-      console.log("Failed to load home data:", error.response?.data || error.message);
+      console.log(
+        "Failed to load home data:",
+        error.response?.data || error.message,
+      );
     } finally {
       setLoading(false);
     }
@@ -151,7 +175,7 @@ export default function HomeScreen({ navigation }) {
     } catch (error) {
       console.log(
         "Failed to save/unsave place:",
-        error.response?.data || error.message
+        error.response?.data || error.message,
       );
     }
   };
@@ -161,8 +185,11 @@ export default function HomeScreen({ navigation }) {
       style={styles.experienceCard}
       onPress={() =>
         navigation.navigate("Discover", {
-          experienceTitle: item.title,
-          filters: item.filters,
+          screen: "DiscoverMain",
+          params: {
+            experienceTitle: item.title,
+            filters: item.filters,
+          },
         })
       }
     >
@@ -287,7 +314,17 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Featured Places</Text>
 
-          <TouchableOpacity onPress={() => navigation.navigate("Discover")}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("Discover", {
+                screen: "DiscoverMain",
+                params: {
+                  experienceTitle: undefined,
+                  filters: undefined,
+                },
+              })
+            }
+          >
             <Text style={styles.seeAll}>See all</Text>
           </TouchableOpacity>
         </View>

@@ -7,11 +7,13 @@ const placeSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+
     role: {
       type: String,
       enum: ["user", "admin"],
       default: "user",
     },
+
     slug: {
       type: String,
       required: true,
@@ -92,13 +94,58 @@ const placeSchema = new mongoose.Schema(
       trim: true,
     },
 
-    highlights: [String],
+    highlights: {
+      type: [String],
+      default: [],
+    },
 
-    activities: [String],
+    activities: {
+      type: [String],
+      default: [],
+    },
 
-    amenities: [String],
+    amenities: {
+      type: [String],
+      default: [],
+    },
 
-    tags: [String],
+    tags: {
+      type: [String],
+      default: [],
+    },
+
+    localTips: {
+      type: [String],
+      default: [],
+    },
+
+    travelWarnings: {
+      type: [String],
+      default: [],
+    },
+
+    bestForPhotography: {
+      type: Boolean,
+      default: false,
+    },
+
+    bestForFamilies: {
+      type: Boolean,
+      default: false,
+    },
+
+    hiddenGemScore: {
+      type: Number,
+      min: 1,
+      max: 10,
+      default: 5,
+    },
+
+    difficultyLevel: {
+      type: String,
+      enum: ["easy", "moderate", "hard"],
+      default: "easy",
+    },
 
     bestTimeToVisit: {
       type: String,
@@ -107,11 +154,21 @@ const placeSchema = new mongoose.Schema(
 
     seasonality: {
       type: [String],
-      enum: ["dry-season", "rainy-season", "year-round"],
+      enum: [
+        "dry-season",
+        "rainy-season",
+        "year-round",
+        "festival-season",
+        "weekends",
+        "evenings",
+      ],
       default: ["year-round"],
     },
 
-    idealFor: [String],
+    idealFor: {
+      type: [String],
+      default: [],
+    },
 
     estimatedVisitDuration: {
       type: String,
@@ -131,14 +188,20 @@ const placeSchema = new mongoose.Schema(
         default: "Point",
       },
       coordinates: {
-        type: [Number], // [longitude, latitude]
+        type: [Number],
         default: [0, 0],
       },
     },
 
-    coverImage: String,
+    coverImage: {
+      type: String,
+      default: "",
+    },
 
-    images: [String],
+    images: {
+      type: [String],
+      default: [],
+    },
 
     nearbyPlaces: [
       {
@@ -181,45 +244,10 @@ const placeSchema = new mongoose.Schema(
       default: "emerging",
     },
 
-    ownershipType: {
-      type: String,
-      enum: [
-        "public",
-        "private",
-        "public-private",
-        "community",
-        "religious",
-        "mixed",
-        "unknown",
-      ],
-      default: "unknown",
-    },
-    seasonality: {
+    sourceLinks: {
       type: [String],
-      enum: [
-        "dry-season",
-        "rainy-season",
-        "year-round",
-        "festival-season",
-        "weekends",
-        "evenings",
-      ],
-      default: ["year-round"],
+      default: [],
     },
-    developmentStatus: {
-      type: String,
-      enum: [
-        "established",
-        "new",
-        "emerging",
-        "under-development",
-        "recently-developed",
-        "unknown",
-      ],
-      default: "established",
-    },
-
-    sourceLinks: [String],
 
     lastVerifiedAt: {
       type: Date,
@@ -233,6 +261,19 @@ const placeSchema = new mongoose.Schema(
       max: 100,
     },
 
+    ethiopiaScore: {
+      type: Number,
+      min: 1,
+      max: 100,
+      default: 50,
+    },
+
+    scoreReason: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
     rating: {
       type: Number,
       min: 0,
@@ -243,16 +284,6 @@ const placeSchema = new mongoose.Schema(
     visitCount: {
       type: Number,
       default: 0,
-    },
-
-    seoTitle: {
-      type: String,
-      trim: true,
-    },
-
-    seoDescription: {
-      type: String,
-      trim: true,
     },
 
     apiVisibility: {
@@ -269,7 +300,7 @@ const placeSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 placeSchema.index({

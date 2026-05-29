@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
-  View,
   Text,
   TextInput,
   TouchableOpacity,
@@ -43,8 +42,6 @@ export default function DiscoverScreen({ navigation, route }) {
   const loadPlaces = async () => {
     try {
       setLoading(true);
-
-      // Load all places first, then curate/filter on frontend
       const data = await getAllPlaces();
       setPlaces(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -61,46 +58,45 @@ export default function DiscoverScreen({ navigation, route }) {
     if (!experienceFilters) return true;
 
     const placeTags = place.tags || [];
+    const checks = [];
 
-    const matchesCategories =
-      !experienceFilters.categories ||
-      experienceFilters.categories.includes(place.category);
+    if (experienceFilters.categories) {
+      checks.push(experienceFilters.categories.includes(place.category));
+    }
 
-    const matchesTypes =
-      !experienceFilters.types || experienceFilters.types.includes(place.type);
+    if (experienceFilters.types) {
+      checks.push(experienceFilters.types.includes(place.type));
+    }
 
-    const matchesTags =
-      !experienceFilters.tags ||
-      experienceFilters.tags.some((tag) => placeTags.includes(tag));
+    if (experienceFilters.tags) {
+      checks.push(
+        experienceFilters.tags.some((tag) => placeTags.includes(tag))
+      );
+    }
 
-    const matchesPriceRanges =
-      !experienceFilters.priceRanges ||
-      experienceFilters.priceRanges.includes(place.priceRange);
+    if (experienceFilters.priceRanges) {
+      checks.push(experienceFilters.priceRanges.includes(place.priceRange));
+    }
 
-    const matchesTourismPriority =
-      !experienceFilters.tourismPriority ||
-      place.tourismPriority === experienceFilters.tourismPriority;
+    if (experienceFilters.tourismPriority) {
+      checks.push(place.tourismPriority === experienceFilters.tourismPriority);
+    }
 
-    return (
-      matchesCategories &&
-      matchesTypes &&
-      matchesTags &&
-      matchesPriceRanges &&
-      matchesTourismPriority
-    );
+    return checks.some(Boolean);
   };
 
   const filteredPlaces = useMemo(() => {
     return places.filter((place) => {
       const matchesExperience = matchesExperienceFilters(place);
-
       const matchesType = activeType === "all" || place.type === activeType;
 
       const text = `${place.name || ""} ${place.region || ""} ${
         place.city || ""
       } ${place.area || ""} ${place.category || ""} ${
-        place.shortDescription || ""
-      } ${(place.tags || []).join(" ")}`.toLowerCase();
+        place.type || ""
+      } ${place.shortDescription || ""} ${(place.tags || []).join(
+        " "
+      )}`.toLowerCase();
 
       const matchesSearch = text.includes(search.toLowerCase());
 
@@ -113,6 +109,9 @@ export default function DiscoverScreen({ navigation, route }) {
       experienceTitle: undefined,
       filters: undefined,
     });
+
+    setActiveType("all");
+    setSearch("");
   };
 
   const renderPlace = ({ item }) => (
@@ -136,13 +135,11 @@ export default function DiscoverScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-      <Text style={styles.title}>
-        {experienceTitle || "Discover Ethiopia"}
-      </Text>
+      <Text style={styles.title}>{experienceTitle || "Discover Ethiopia"}</Text>
 
       <Text style={styles.subtitle}>
         {experienceTitle
-          ? "Curated places selected for this experience."
+          ? `${filteredPlaces.length} curated places for this experience.`
           : "Search destinations, resorts, lodges, and experiences."}
       </Text>
 

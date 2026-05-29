@@ -3,172 +3,200 @@ import { colors, globalStyles } from "../../styles/theme";
 
 export default StyleSheet.create({
   container: {
-    ...globalStyles.container,
+    flex: 1,
     backgroundColor: colors.lightGray,
-    paddingTop: 32,
-    justifyContent: "flex-start",
+    paddingTop: 24,
   },
-heartButton: {
-  position: "absolute",
-  top: 14,
-  right: 14,
-  zIndex: 10,
-  backgroundColor: "#fff",
-  width: 38,
-  height: 38,
-  borderRadius: 19,
-  justifyContent: "center",
-  alignItems: "center",
-},
+
   heroCard: {
-    ...globalStyles.card,
-    backgroundColor: colors.white,
-    borderColor: colors.primary,
-    borderWidth: 1,
+    marginHorizontal: 20,
+    backgroundColor: colors.primary,
+    borderRadius: 28,
+    padding: 24,
+    minHeight: 190,
+    justifyContent: "flex-end",
+  },
+
+  kicker: {
+    fontSize: 12,
+    fontWeight: "800",
+    color: "#E8EEDB",
+    textTransform: "uppercase",
+    marginBottom: 10,
+    letterSpacing: 0.6,
   },
 
   header: {
-    ...globalStyles.headingLarge,
-    color: colors.primary,
+    fontSize: 32,
+    lineHeight: 38,
+    fontWeight: "900",
+    color: colors.white,
+    marginBottom: 12,
   },
 
   body: {
-    ...globalStyles.bodyText,
+    fontSize: 15,
+    lineHeight: 22,
+    color: "#F4F4F4",
   },
 
   sectionHeader: {
     ...globalStyles.rowSpaceBetween,
-    marginTop: 20,
-    marginBottom: 8,
+    marginTop: 26,
+    marginBottom: 10,
+    paddingHorizontal: 20,
   },
 
   sectionTitle: {
-    ...globalStyles.headingSmall,
-    color: colors.darkGray,
+    fontSize: 21,
+    fontWeight: "900",
+    color: colors.primary,
   },
 
   seeAll: {
     color: colors.primary,
-    fontWeight: "600",
+    fontWeight: "800",
   },
 
-  listContent: {
-    paddingBottom: 16,
+  experienceList: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingVertical: 8,
   },
 
-  placeCard: {
-    ...globalStyles.card,
-    marginVertical: 8,
+  experienceCard: {
+    width: 200,
+    backgroundColor: colors.white,
+    borderRadius: 22,
+    padding: 18,
+    marginRight: 14,
+    borderWidth: 1,
+    borderColor: colors.borderGray,
   },
 
-  placeType: {
-    fontSize: 12,
-    textTransform: "uppercase",
-    color: colors.accent,
-    fontWeight: "700",
+  experienceIcon: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: "#F1F4EA",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 14,
+  },
+
+  experienceTitle: {
+    fontSize: 17,
+    fontWeight: "900",
+    color: colors.primary,
     marginBottom: 6,
   },
 
+  experienceSubtitle: {
+    fontSize: 13,
+    color: colors.darkGray,
+    lineHeight: 19,
+  },
+
+  collectionList: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingVertical: 8,
+  },
+
+  collectionCard: {
+    width: 260,
+    minHeight: 170,
+    backgroundColor: colors.primary,
+    borderRadius: 26,
+    padding: 20,
+    marginRight: 14,
+    justifyContent: "space-between",
+  },
+
+  collectionLabel: {
+    fontSize: 11,
+    fontWeight: "900",
+    textTransform: "uppercase",
+    color: "#E8EEDB",
+    marginBottom: 12,
+    letterSpacing: 0.5,
+  },
+
+  collectionTitle: {
+    fontSize: 21,
+    lineHeight: 25,
+    fontWeight: "900",
+    color: colors.white,
+    marginBottom: 8,
+  },
+
+  collectionSubtitle: {
+    fontSize: 13,
+    color: "#F4F4F4",
+    lineHeight: 19,
+    marginBottom: 16,
+  },
+
+  collectionMeta: {
+    fontSize: 12,
+    fontWeight: "800",
+    color: "#E8EEDB",
+  },
+
+  listContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 24,
+  },
+
+  placeCard: {
+    backgroundColor: colors.white,
+    borderRadius: 22,
+    padding: 18,
+    marginVertical: 8,
+    borderWidth: 1,
+    borderColor: colors.borderGray,
+  },
+
+  heartButton: {
+    position: "absolute",
+    top: 14,
+    right: 14,
+    zIndex: 10,
+    backgroundColor: "#fff",
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  placeType: {
+    fontSize: 11,
+    textTransform: "uppercase",
+    color: colors.accent,
+    fontWeight: "900",
+    marginBottom: 7,
+    letterSpacing: 0.5,
+  },
+
   placeName: {
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 19,
+    fontWeight: "900",
     color: colors.primary,
-    marginBottom: 4,
+    marginBottom: 5,
+    paddingRight: 44,
   },
 
   placeLocation: {
     fontSize: 14,
     color: colors.darkGray,
     marginBottom: 8,
+    fontWeight: "600",
   },
 
   placeDescription: {
     ...globalStyles.bodyTextSmall,
     color: colors.darkGray,
+    lineHeight: 20,
   },
-  kicker: {
-  fontSize: 13,
-  fontWeight: "700",
-  color: colors.accent,
-  textTransform: "uppercase",
-  marginBottom: 8,
-},
-
-experienceList: {
-  paddingVertical: 8,
-  paddingRight: 16,
-},
-
-experienceCard: {
-  width: 190,
-  backgroundColor: colors.white,
-  borderRadius: 18,
-  padding: 16,
-  marginRight: 12,
-  borderWidth: 1,
-  borderColor: "#E5E5E5",
-},
-
-experienceIcon: {
-  width: 42,
-  height: 42,
-  borderRadius: 21,
-  backgroundColor: "#F1F4EA",
-  justifyContent: "center",
-  alignItems: "center",
-  marginBottom: 12,
-},
-
-experienceTitle: {
-  fontSize: 16,
-  fontWeight: "700",
-  color: colors.primary,
-  marginBottom: 6,
-},
-
-experienceSubtitle: {
-  fontSize: 13,
-  color: colors.darkGray,
-  lineHeight: 18,
-},
-collectionList: {
-  paddingVertical: 8,
-  paddingRight: 16,
-},
-
-collectionCard: {
-  width: 240,
-  backgroundColor: colors.primary,
-  borderRadius: 20,
-  padding: 18,
-  marginRight: 14,
-},
-
-collectionLabel: {
-  fontSize: 11,
-  fontWeight: "800",
-  textTransform: "uppercase",
-  color: "#E8EEDB",
-  marginBottom: 10,
-},
-
-collectionTitle: {
-  fontSize: 18,
-  fontWeight: "800",
-  color: colors.white,
-  marginBottom: 8,
-},
-
-collectionSubtitle: {
-  fontSize: 13,
-  color: "#F4F4F4",
-  lineHeight: 18,
-  marginBottom: 14,
-},
-
-collectionMeta: {
-  fontSize: 12,
-  fontWeight: "700",
-  color: "#E8EEDB",
-},
 });

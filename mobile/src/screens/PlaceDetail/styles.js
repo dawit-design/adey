@@ -222,4 +222,121 @@ passportButtonText: {
 passportButtonTextActive: {
   color: colors.white,
 },
+storyCard: {
+  backgroundColor: colors.white,
+  borderRadius: 20,
+  padding: 18,
+  marginBottom: 18,
+  borderWidth: 1,
+  borderColor: colors.borderGray,
+},
+
+storyLabel: {
+  fontSize: 12,
+  fontWeight: "800",
+  color: colors.accent,
+  textTransform: "uppercase",
+  marginBottom: 8,
+},
+
+storyText: {
+  fontSize: 17,
+  lineHeight: 27,
+  color: colors.darkGray,
+  fontWeight: "500",
+},
+
+metaCardFull: {
+  flex: 1,
+  backgroundColor: colors.white,
+  borderRadius: 18,
+  padding: 16,
+  borderWidth: 1,
+  borderColor: colors.borderGray,
+},
+scoreCard: {
+  backgroundColor: colors.primary,
+  borderRadius: 20,
+  padding: 18,
+  marginBottom: 18,
+},
+
+scoreHeader: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: 8,
+},
+
+scoreLabel: {
+  fontSize: 12,
+  fontWeight: "800",
+  color: "#E8EEDB",
+  textTransform: "uppercase",
+},
+
+scoreNumber: {
+  fontSize: 24,
+  fontWeight: "900",
+  color: colors.white,
+},
+
+scoreReason: {
+  fontSize: 14,
+  lineHeight: 21,
+  color: "#F4F4F4",
+},
+insightGrid: {
+  flexDirection: "row",
+  flexWrap: "wrap",
+  gap: 8,
+  marginBottom: 18,
+},
+
+insightChip: {
+  flexDirection: "row",
+  alignItems: "center",
+  backgroundColor: colors.white,
+  borderWidth: 1,
+  borderColor: colors.borderGray,
+  paddingHorizontal: 12,
+  paddingVertical: 9,
+  borderRadius: 18,
+},
+
+insightText: {
+  marginLeft: 6,
+  fontSize: 13,
+  fontWeight: "700",
+  color: colors.primary,
+  textTransform: "capitalize",
+},
+
+tipRow: {
+  flexDirection: "row",
+  alignItems: "flex-start",
+  marginBottom: 10,
+},
+
+tipText: {
+  flex: 1,
+  marginLeft: 8,
+  fontSize: 15,
+  lineHeight: 22,
+  color: colors.darkGray,
+},
+
+warningRow: {
+  flexDirection: "row",
+  alignItems: "flex-start",
+  marginBottom: 10,
+},
+
+warningText: {
+  flex: 1,
+  marginLeft: 8,
+  fontSize: 15,
+  lineHeight: 22,
+  color: colors.darkGray,
+},
 });

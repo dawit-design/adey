@@ -25,7 +25,7 @@ export default function CollectionDetailsScreen({ navigation, route }) {
     } catch (error) {
       console.log(
         "Failed to load collection:",
-        error.response?.data || error.message
+        error.response?.data || error.message,
       );
     } finally {
       setLoading(false);
@@ -78,15 +78,15 @@ export default function CollectionDetailsScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-        <TouchableOpacity
-  style={styles.backButton}
-  onPress={() => navigation.goBack()}
->
-  <Ionicons name="arrow-back" size={22} color="#556B2F" />
-  <Text style={styles.backText}>Back</Text>
-</TouchableOpacity>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Ionicons name="arrow-back" size={22} color="#556B2F" />
+        <Text style={styles.backText}>Back</Text>
+      </TouchableOpacity>
       <FlatList
-        data={collection.places || []}
+        data={(collection.places || []).filter(Boolean)}
         keyExtractor={(item) => item._id}
         renderItem={renderPlace}
         showsVerticalScrollIndicator={false}

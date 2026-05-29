@@ -4,6 +4,151 @@ const Place = require("../models/Place");
 const slugify = require("../utils/slugify");
 
 dotenv.config();
+const getEthiopiaScore = (place) => {
+  let score = 50;
+
+  if (place.tourismPriority === "iconic") score += 25;
+  if (place.tourismPriority === "heritage") score += 18;
+  if (place.tourismPriority === "eco-tourism") score += 14;
+  if (place.tourismPriority === "hidden-gem") score += 8;
+  if (place.tourismPriority === "government-project") score += 10;
+  if (place.tourismPriority === "luxury-growth") score += 7;
+  if (place.tourismPriority === "emerging") score += 6;
+
+  if (place.tags?.includes("unesco")) score += 15;
+  if (place.category === "historical") score += 12;
+  if (place.category === "religious") score += 12;
+  if (place.category === "heritage") score += 10;
+  if (place.category === "wildlife") score += 10;
+  if (place.category === "mountain") score += 10;
+  if (place.category === "cultural") score += 10;
+  if (place.category === "nature") score += 8;
+  if (place.category === "lake") score += 6;
+
+  if (place.featured) score += 5;
+  if (place.isNewOrGrowing) score += 4;
+
+  return Math.min(score, 100);
+};
+
+const getScoreReason = (place) => {
+  if (place.tags?.includes("unesco")) {
+    return "Recognized for outstanding heritage, cultural, or natural significance.";
+  }
+
+  if (place.tourismPriority === "iconic") {
+    return "One of Ethiopia’s most iconic and defining travel experiences.";
+  }
+
+  if (place.tourismPriority === "heritage") {
+    return "Strong historical, cultural, or spiritual importance within Ethiopia.";
+  }
+
+  if (place.tourismPriority === "eco-tourism") {
+    return "Important nature, wildlife, or eco-tourism value.";
+  }
+
+  if (place.tourismPriority === "hidden-gem") {
+    return "A less obvious destination with strong discovery value.";
+  }
+
+  if (place.tourismPriority === "government-project") {
+    return "Part of Ethiopia’s newer tourism and national identity development.";
+  }
+
+  if (place.tourismPriority === "luxury-growth") {
+    return "A growing premium travel experience within Ethiopia’s tourism landscape.";
+  }
+
+  return "A meaningful Ethiopian travel experience based on its culture, nature, or visitor appeal.";
+};
+
+const getDifficultyLevel = (place) => {
+  if (
+    place.category === "adventure" ||
+    place.type === "park"
+  ) {
+    return "moderate";
+  }
+
+  if (
+    place.tags?.includes("trekking") ||
+    place.tags?.includes("hiking")
+  ) {
+    return "hard";
+  }
+
+  return "easy";
+};
+
+const getHiddenGemScore = (place) => {
+  if (place.tourismPriority === "hidden-gem") return 10;
+  if (place.tourismPriority === "emerging") return 8;
+  if (place.tourismPriority === "iconic") return 2;
+  return 5;
+};
+
+const getPhotographyFlag = (place) => {
+  const photographyCategories = [
+    "nature",
+    "mountain",
+    "lake",
+    "wildlife",
+    "heritage",
+    "historical",
+  ];
+
+  return photographyCategories.includes(place.category);
+};
+
+const getFamilyFlag = (place) => {
+  return (
+    place.category === "family" ||
+    place.type === "museum" ||
+    place.type === "cultural-site" ||
+    place.priceRange === "budget"
+  );
+};
+
+const getLocalTips = (place) => {
+  const tips = [];
+
+  if (place.category === "religious") {
+    tips.push("Dress modestly and respectfully.");
+  }
+
+  if (place.category === "mountain") {
+    tips.push("Carry a light jacket as temperatures can change quickly.");
+  }
+
+  if (place.category === "nature") {
+    tips.push("Start early for the best experience and fewer crowds.");
+  }
+
+  if (place.type === "cultural-site") {
+    tips.push("Hiring a local guide can enrich the experience.");
+  }
+
+  return tips;
+};
+
+const getTravelWarnings = (place) => {
+  const warnings = [];
+
+  if (place.category === "adventure") {
+    warnings.push("Some activities may require advance preparation.");
+  }
+
+  if (place.category === "wildlife") {
+    warnings.push("Access may vary depending on season and weather.");
+  }
+
+  if (place.tourismPriority === "hidden-gem") {
+    warnings.push("Tourism infrastructure may be limited.");
+  }
+
+  return warnings;
+};
 
 const withDefaults = (place, index) => ({
   country: "Ethiopia",
@@ -19,7 +164,20 @@ const withDefaults = (place, index) => ({
   status: "published",
   isCurated: true,
   lastVerifiedAt: new Date(),
+
   ...place,
+
+  ethiopiaScore: getEthiopiaScore(place),
+  scoreReason: getScoreReason(place),
+
+  difficultyLevel: getDifficultyLevel(place),
+  hiddenGemScore: getHiddenGemScore(place),
+
+  bestForPhotography: getPhotographyFlag(place),
+  bestForFamilies: getFamilyFlag(place),
+
+  localTips: getLocalTips(place),
+  travelWarnings: getTravelWarnings(place),
 });
 
 const rawPlaces = [

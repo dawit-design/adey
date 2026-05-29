@@ -47,11 +47,7 @@ export default function PlaceDetailScreen({ route, navigation }) {
       try {
         const savedIds = await getSavedPlaceIds();
         setIsSaved(savedIds.includes(placeData._id));
-      } catch (savedError) {
-        console.log(
-          "Saved IDs not loaded:",
-          savedError.response?.data || savedError.message
-        );
+      } catch {
         setIsSaved(false);
       }
 
@@ -66,11 +62,7 @@ export default function PlaceDetailScreen({ route, navigation }) {
 
         setIsVisited(visitedIds.includes(placeData._id));
         setIsWantToVisit(wantToVisitIds.includes(placeData._id));
-      } catch (passportError) {
-        console.log(
-          "Passport not loaded:",
-          passportError.response?.data || passportError.message
-        );
+      } catch {
         setIsVisited(false);
         setIsWantToVisit(false);
       }
@@ -93,10 +85,7 @@ export default function PlaceDetailScreen({ route, navigation }) {
         setIsSaved(true);
       }
     } catch (error) {
-      console.log(
-        "Failed to save/unsave place:",
-        error.response?.data || error.message
-      );
+      console.log("Failed to save/unsave:", error.response?.data || error.message);
     }
   };
 
@@ -112,10 +101,7 @@ export default function PlaceDetailScreen({ route, navigation }) {
         setIsWantToVisit(true);
       }
     } catch (error) {
-      console.log(
-        "Failed to update want to visit:",
-        error.response?.data || error.message
-      );
+      console.log("Failed to update want to visit:", error.response?.data || error.message);
     }
   };
 
@@ -132,12 +118,13 @@ export default function PlaceDetailScreen({ route, navigation }) {
         setIsWantToVisit(false);
       }
     } catch (error) {
-      console.log(
-        "Failed to update visited:",
-        error.response?.data || error.message
-      );
+      console.log("Failed to update visited:", error.response?.data || error.message);
     }
   };
+
+  const shouldShowHiddenGem =
+    place?.tourismPriority === "hidden-gem" ||
+    (place?.hiddenGemScore && place.hiddenGemScore >= 8);
 
   if (loading) {
     return (
@@ -150,7 +137,7 @@ export default function PlaceDetailScreen({ route, navigation }) {
   if (!place) {
     return (
       <View style={styles.center}>
-        <Text style={styles.title}>Place not found</Text>
+        <Text>Place not found</Text>
       </View>
     );
   }
@@ -188,6 +175,61 @@ export default function PlaceDetailScreen({ route, navigation }) {
 
       <View style={styles.content}>
         <Text style={styles.shortDescription}>{place.shortDescription}</Text>
+
+        {place.story ? (
+          <View style={styles.storyCard}>
+            <Text style={styles.storyLabel}>Why it matters</Text>
+            <Text style={styles.storyText}>{place.story}</Text>
+          </View>
+        ) : null}
+
+        {place.ethiopiaScore ? (
+          <View style={styles.scoreCard}>
+            <View style={styles.scoreHeader}>
+              <Text style={styles.scoreLabel}>Ethiopia Score</Text>
+              <Text style={styles.scoreNumber}>{place.ethiopiaScore}/100</Text>
+            </View>
+
+            <Text style={styles.scoreReason}>
+              {place.scoreReason ||
+                "A meaningful Ethiopian travel experience based on culture, nature, or visitor appeal."}
+            </Text>
+          </View>
+        ) : null}
+
+        <View style={styles.insightGrid}>
+          {place.bestForPhotography ? (
+            <View style={styles.insightChip}>
+              <Ionicons name="camera-outline" size={16} color="#556B2F" />
+              <Text style={styles.insightText}>Great for photography</Text>
+            </View>
+          ) : null}
+
+          {place.bestForFamilies ? (
+            <View style={styles.insightChip}>
+              <Ionicons name="people-outline" size={16} color="#556B2F" />
+              <Text style={styles.insightText}>Family friendly</Text>
+            </View>
+          ) : null}
+
+          {place.difficultyLevel ? (
+            <View style={styles.insightChip}>
+              <Ionicons name="walk-outline" size={16} color="#556B2F" />
+              <Text style={styles.insightText}>
+                {place.difficultyLevel} difficulty
+              </Text>
+            </View>
+          ) : null}
+
+          {shouldShowHiddenGem ? (
+            <View style={styles.insightChip}>
+              <Ionicons name="diamond-outline" size={16} color="#556B2F" />
+              <Text style={styles.insightText}>
+                Hidden gem {place.hiddenGemScore}/10
+              </Text>
+            </View>
+          ) : null}
+        </View>
 
         <View style={styles.passportActions}>
           <TouchableOpacity
@@ -251,14 +293,40 @@ export default function PlaceDetailScreen({ route, navigation }) {
           </View>
         </View>
 
-        {place.story ? (
-          <Section title="Story">
-            <Text style={styles.body}>{place.story}</Text>
+        <View style={styles.metaRow}>
+          <View style={styles.metaCardFull}>
+            <Ionicons name="calendar-outline" size={20} color="#556B2F" />
+            <Text style={styles.metaLabel}>Best time to go</Text>
+            <Text style={styles.metaValue}>
+              {place.bestTimeToVisit || "Not specified"}
+            </Text>
+          </View>
+        </View>
+
+        {place.localTips?.length > 0 ? (
+          <Section title="Local tips">
+            {place.localTips.map((item, index) => (
+              <View key={index} style={styles.tipRow}>
+                <Ionicons name="bulb-outline" size={17} color="#556B2F" />
+                <Text style={styles.tipText}>{item}</Text>
+              </View>
+            ))}
+          </Section>
+        ) : null}
+
+        {place.travelWarnings?.length > 0 ? (
+          <Section title="Before you go">
+            {place.travelWarnings.map((item, index) => (
+              <View key={index} style={styles.warningRow}>
+                <Ionicons name="alert-circle-outline" size={17} color="#9A6B00" />
+                <Text style={styles.warningText}>{item}</Text>
+              </View>
+            ))}
           </Section>
         ) : null}
 
         {place.highlights?.length > 0 ? (
-          <Section title="Highlights">
+          <Section title="What you’ll experience">
             {place.highlights.map((item, index) => (
               <Text key={index} style={styles.bullet}>
                 • {item}
@@ -268,7 +336,7 @@ export default function PlaceDetailScreen({ route, navigation }) {
         ) : null}
 
         {place.activities?.length > 0 ? (
-          <Section title="Activities">
+          <Section title="Things to do">
             <View style={styles.chipWrap}>
               {place.activities.map((item, index) => (
                 <View key={index} style={styles.chip}>
@@ -280,7 +348,7 @@ export default function PlaceDetailScreen({ route, navigation }) {
         ) : null}
 
         {place.idealFor?.length > 0 ? (
-          <Section title="Ideal For">
+          <Section title="Best for">
             <View style={styles.chipWrap}>
               {place.idealFor.map((item, index) => (
                 <View key={index} style={styles.softChip}>
@@ -290,12 +358,6 @@ export default function PlaceDetailScreen({ route, navigation }) {
             </View>
           </Section>
         ) : null}
-
-        <Section title="Best Time to Visit">
-          <Text style={styles.body}>
-            {place.bestTimeToVisit || "Not specified"}
-          </Text>
-        </Section>
       </View>
     </ScrollView>
   );
