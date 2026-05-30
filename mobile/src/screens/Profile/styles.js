@@ -1,5 +1,5 @@
-import { StyleSheet } from 'react-native';
-import { colors, globalStyles } from '../../styles/theme';
+import { StyleSheet } from "react-native";
+import { colors, globalStyles } from "../../styles/theme";
 
 export default StyleSheet.create({
   safeArea: {
@@ -9,7 +9,7 @@ export default StyleSheet.create({
 
   scrollContainer: {
     flexGrow: 1,
-    paddingTop: 24,
+    paddingTop: 18,
     paddingBottom: 36,
   },
 
@@ -19,9 +19,29 @@ export default StyleSheet.create({
 
   loadingContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: colors.lightGray,
+  },
+
+  backButton: {
+    alignSelf: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    backgroundColor: colors.white,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#E6E6E6",
+    marginBottom: 18,
+  },
+
+  backButtonText: {
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: "800",
   },
 
   title: {
@@ -37,21 +57,35 @@ export default StyleSheet.create({
   },
 
   headerCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: colors.white,
     borderRadius: 22,
     padding: 18,
     marginBottom: 18,
     borderWidth: 1,
-    borderColor: '#E6E6E6',
+    borderColor: "#E6E6E6",
+    position: "relative",
+  },
+
+  editIconButton: {
+    position: "absolute",
+    top: 14,
+    right: 14,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: colors.lightGray,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 10,
   },
 
   profileImage: {
     width: 86,
     height: 86,
     borderRadius: 43,
-    backgroundColor: '#E8E8E8',
+    backgroundColor: "#E8E8E8",
   },
 
   profilePlaceholder: {
@@ -59,129 +93,143 @@ export default StyleSheet.create({
     height: 86,
     borderRadius: 43,
     backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   profilePlaceholderText: {
     color: colors.white,
     fontSize: 34,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 
   headerTextBox: {
     flex: 1,
     marginLeft: 16,
+    paddingRight: 40,
   },
 
   fullName: {
     fontSize: 22,
-    fontWeight: '700',
+    fontWeight: "700",
     color: colors.primary,
-    marginBottom: 4,
+    marginBottom: 8,
   },
 
-  username: {
-    fontSize: 14,
-    color: colors.darkGray,
+  profileMetaRow: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 6,
   },
 
-  location: {
+  profileMetaText: {
     fontSize: 14,
     color: colors.darkGray,
+    marginLeft: 6,
+    fontWeight: "500",
   },
 
-  sectionCard: {
+  passportCard: {
+    backgroundColor: colors.primary,
+    borderRadius: 22,
+    padding: 18,
+    marginBottom: 18,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  passportIconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(255,255,255,0.18)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 14,
+  },
+
+  passportTextBox: {
+    flex: 1,
+  },
+
+  passportTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: colors.white,
+    marginBottom: 4,
+  },
+
+  passportSubtitle: {
+    fontSize: 13,
+    color: "#F4F4F4",
+    lineHeight: 18,
+  },
+
+  accountCard: {
     backgroundColor: colors.white,
     borderRadius: 18,
-    padding: 18,
-    marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#E6E6E6',
+    borderColor: "#E6E6E6",
+    overflow: "hidden",
   },
 
-  sectionTitle: {
-    ...globalStyles.headingSmall,
+  accountTitle: {
+    fontSize: 18,
+    fontWeight: "700",
     color: colors.primary,
-    marginBottom: 12,
+    paddingHorizontal: 18,
+    paddingTop: 18,
+    paddingBottom: 10,
   },
 
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+  accountRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    borderTopWidth: 1,
+    borderTopColor: "#F0F0F0",
   },
 
-  infoLabel: {
-    flex: 1,
-    fontSize: 14,
-    color: colors.darkGray,
-    fontWeight: '600',
+  lastAccountRow: {
+    borderBottomWidth: 0,
   },
 
-  infoValue: {
-    flex: 1.4,
-    fontSize: 14,
+  accountRowLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  accountIconBox: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: colors.lightGray,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+
+  deleteIconBox: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: "#FFF1F1",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+
+  accountRowText: {
+    fontSize: 15,
+    fontWeight: "600",
     color: colors.primary,
-    textAlign: 'right',
   },
 
-  buttonGroup: {
-    marginTop: 8,
-  },
-
-  deleteButton: {
-    borderWidth: 1,
-    borderColor: colors.error,
-    borderRadius: 14,
-    paddingVertical: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 12,
-    backgroundColor: colors.white,
-  },
-
-  deleteButtonText: {
+  deleteRowText: {
+    fontSize: 15,
+    fontWeight: "600",
     color: colors.error,
-    fontWeight: '700',
-    fontSize: 16,
   },
-  passportCard: {
-  backgroundColor: colors.primary,
-  borderRadius: 22,
-  padding: 18,
-  marginTop: 18,
-  flexDirection: "row",
-  alignItems: "center",
-},
-
-passportIconBox: {
-  width: 44,
-  height: 44,
-  borderRadius: 22,
-  backgroundColor: "rgba(255,255,255,0.18)",
-  alignItems: "center",
-  justifyContent: "center",
-  marginRight: 14,
-},
-
-passportTextBox: {
-  flex: 1,
-},
-
-passportTitle: {
-  fontSize: 18,
-  fontWeight: "800",
-  color: colors.white,
-  marginBottom: 4,
-},
-
-passportSubtitle: {
-  fontSize: 13,
-  color: "#F4F4F4",
-  lineHeight: 18,
-},
 });

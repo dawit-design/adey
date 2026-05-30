@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
-import globalStyles, { colors } from "../../styles/theme";
+import { colors } from "../../styles/theme";
 import styles from "./styles";
 import {
   getCurrentUser,
@@ -46,6 +46,12 @@ export default function ProfileScreen({ navigation }) {
     }, [])
   );
 
+  const goBack = () => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    }
+  };
+
   const handleSignOut = async () => {
     await clearAuth();
     setAuthToken(null);
@@ -61,19 +67,14 @@ export default function ProfileScreen({ navigation }) {
       "Delete Account",
       "Are you sure you want to delete your account? This action cannot be undone.",
       [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
+        { text: "Cancel", style: "cancel" },
         {
           text: "Delete",
           style: "destructive",
           onPress: async () => {
             try {
               setLoading(true);
-
               await deleteAccount();
-
               await clearAuth();
               setAuthToken(null);
 
@@ -115,10 +116,24 @@ export default function ProfileScreen({ navigation }) {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.container}>
+          <TouchableOpacity style={styles.backButton} onPress={goBack}>
+            <Ionicons name="arrow-back" size={19} color={colors.primary} />
+            <Text style={styles.backButtonText}>Back</Text>
+          </TouchableOpacity>
+
           <Text style={styles.title}>Profile</Text>
           <Text style={styles.subtitle}>Your ADEY travel identity.</Text>
 
           <View style={styles.headerCard}>
+            <TouchableOpacity
+              style={styles.editIconButton}
+              onPress={() => navigation.navigate("EditProfile")}
+              disabled={loading}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="pencil-outline" size={18} color={colors.primary} />
+            </TouchableOpacity>
+
             {user.profile_photo ? (
               <Image
                 source={{ uri: user.profile_photo }}
@@ -138,20 +153,33 @@ export default function ProfileScreen({ navigation }) {
               <Text style={styles.fullName}>
                 {user.full_name || "No name set"}
               </Text>
-              <Text style={styles.username}>
-                @{user.username || "traveler"}
-              </Text>
-              <Text style={styles.location}>
-                {user.country_of_residence ||
-                  user.nationality ||
-                  "Explorer"}
-              </Text>
+
+              <View style={styles.profileMetaRow}>
+                <Ionicons name="at-outline" size={15} color={colors.darkGray} />
+                <Text style={styles.profileMetaText}>
+                  {user.username || "traveler"}
+                </Text>
+              </View>
+
+              <View style={styles.profileMetaRow}>
+                <Ionicons
+                  name="location-outline"
+                  size={15}
+                  color={colors.darkGray}
+                />
+                <Text style={styles.profileMetaText}>
+                  {user.country_of_residence ||
+                    user.nationality ||
+                    "Explorer"}
+                </Text>
+              </View>
             </View>
           </View>
 
           <TouchableOpacity
             style={styles.passportCard}
             onPress={() => navigation.navigate("Passport")}
+            activeOpacity={0.85}
           >
             <View style={styles.passportIconBox}>
               <Ionicons name="ribbon-outline" size={24} color={colors.white} />
@@ -167,33 +195,61 @@ export default function ProfileScreen({ navigation }) {
             <Ionicons name="chevron-forward" size={22} color={colors.white} />
           </TouchableOpacity>
 
-          <View style={styles.buttonGroup}>
-            <TouchableOpacity
-              style={globalStyles.buttonOutline}
-              onPress={() => navigation.navigate("EditProfile")}
-              disabled={loading}
-            >
-              <Text style={globalStyles.buttonOutlineText}>Edit Profile</Text>
-            </TouchableOpacity>
+          <View style={styles.accountCard}>
+            <Text style={styles.accountTitle}>Account</Text>
 
             <TouchableOpacity
-              style={globalStyles.buttonPrimary}
+              style={styles.accountRow}
               onPress={handleSignOut}
               disabled={loading}
+              activeOpacity={0.75}
             >
-              <Text style={globalStyles.buttonPrimaryText}>Sign Out</Text>
+              <View style={styles.accountRowLeft}>
+                <View style={styles.accountIconBox}>
+                  <Ionicons
+                    name="log-out-outline"
+                    size={20}
+                    color={colors.primary}
+                  />
+                </View>
+
+                <Text style={styles.accountRowText}>Sign Out</Text>
+              </View>
+
+              <Ionicons
+                name="chevron-forward"
+                size={19}
+                color={colors.darkGray}
+              />
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.deleteButton}
+              style={[styles.accountRow, styles.lastAccountRow]}
               onPress={handleDeleteAccount}
               disabled={loading}
+              activeOpacity={0.75}
             >
-              {loading ? (
-                <ActivityIndicator size="small" color={colors.error} />
-              ) : (
-                <Text style={styles.deleteButtonText}>Delete Account</Text>
-              )}
+              <View style={styles.accountRowLeft}>
+                <View style={styles.deleteIconBox}>
+                  <Ionicons
+                    name="trash-outline"
+                    size={20}
+                    color={colors.error}
+                  />
+                </View>
+
+                {loading ? (
+                  <ActivityIndicator size="small" color={colors.error} />
+                ) : (
+                  <Text style={styles.deleteRowText}>Delete Account</Text>
+                )}
+              </View>
+
+              <Ionicons
+                name="chevron-forward"
+                size={19}
+                color={colors.error}
+              />
             </TouchableOpacity>
           </View>
         </View>
