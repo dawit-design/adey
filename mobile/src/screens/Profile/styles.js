@@ -165,6 +165,15 @@ export default StyleSheet.create({
     lineHeight: 18,
   },
 
+  preferencesCard: {
+    backgroundColor: colors.white,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "#E6E6E6",
+    overflow: "hidden",
+    marginBottom: 18,
+  },
+
   accountCard: {
     backgroundColor: colors.white,
     borderRadius: 18,
@@ -173,13 +182,56 @@ export default StyleSheet.create({
     overflow: "hidden",
   },
 
-  accountTitle: {
+  cardTitle: {
     fontSize: 18,
     fontWeight: "700",
     color: colors.primary,
     paddingHorizontal: 18,
     paddingTop: 18,
     paddingBottom: 10,
+  },
+
+  preferenceRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 18,
+    paddingVertical: 15,
+    borderTopWidth: 1,
+    borderTopColor: "#F0F0F0",
+  },
+
+  lastPreferenceRow: {
+    borderBottomWidth: 0,
+  },
+
+  preferenceLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+
+  preferenceIconBox: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: colors.lightGray,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+
+  preferenceLabel: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: colors.primary,
+    marginBottom: 2,
+  },
+
+  preferenceValue: {
+    fontSize: 13,
+    fontWeight: "500",
+    color: colors.darkGray,
   },
 
   accountRow: {

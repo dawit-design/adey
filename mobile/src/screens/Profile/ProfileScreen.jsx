@@ -74,6 +74,7 @@ export default function ProfileScreen({ navigation }) {
           onPress: async () => {
             try {
               setLoading(true);
+
               await deleteAccount();
               await clearAuth();
               setAuthToken(null);
@@ -195,8 +196,93 @@ export default function ProfileScreen({ navigation }) {
             <Ionicons name="chevron-forward" size={22} color={colors.white} />
           </TouchableOpacity>
 
+          <View style={styles.preferencesCard}>
+            <Text style={styles.cardTitle}>Preferences</Text>
+
+            <TouchableOpacity style={styles.preferenceRow} activeOpacity={0.75}>
+              <View style={styles.preferenceLeft}>
+                <View style={styles.preferenceIconBox}>
+                  <Ionicons
+                    name="moon-outline"
+                    size={20}
+                    color={colors.primary}
+                  />
+                </View>
+
+                <View>
+                  <Text style={styles.preferenceLabel}>Appearance</Text>
+                  <Text style={styles.preferenceValue}>System default</Text>
+                </View>
+              </View>
+
+              <Ionicons
+                name="chevron-forward"
+                size={19}
+                color={colors.darkGray}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.preferenceRow}
+              onPress={() => navigation.navigate("EditProfile")}
+              activeOpacity={0.75}
+            >
+              <View style={styles.preferenceLeft}>
+                <View style={styles.preferenceIconBox}>
+                  <Ionicons
+                    name="language-outline"
+                    size={20}
+                    color={colors.primary}
+                  />
+                </View>
+
+                <View>
+                  <Text style={styles.preferenceLabel}>Language</Text>
+                  <Text style={styles.preferenceValue}>
+                    {user.preferred_language || "Not set"}
+                  </Text>
+                </View>
+              </View>
+
+              <Ionicons
+                name="chevron-forward"
+                size={19}
+                color={colors.darkGray}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.preferenceRow, styles.lastPreferenceRow]}
+              onPress={() => navigation.navigate("EditProfile")}
+              activeOpacity={0.75}
+            >
+              <View style={styles.preferenceLeft}>
+                <View style={styles.preferenceIconBox}>
+                  <Ionicons
+                    name="time-outline"
+                    size={20}
+                    color={colors.primary}
+                  />
+                </View>
+
+                <View>
+                  <Text style={styles.preferenceLabel}>Timezone</Text>
+                  <Text style={styles.preferenceValue}>
+                    {user.timezone || "UTC"}
+                  </Text>
+                </View>
+              </View>
+
+              <Ionicons
+                name="chevron-forward"
+                size={19}
+                color={colors.darkGray}
+              />
+            </TouchableOpacity>
+          </View>
+
           <View style={styles.accountCard}>
-            <Text style={styles.accountTitle}>Account</Text>
+            <Text style={styles.cardTitle}>Account</Text>
 
             <TouchableOpacity
               style={styles.accountRow}
