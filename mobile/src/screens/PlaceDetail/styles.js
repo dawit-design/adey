@@ -469,4 +469,73 @@ export default StyleSheet.create({
     fontSize: 14,
     fontWeight: "800",
   },
+  mapActionCard: {
+  backgroundColor: colors.white,
+  borderRadius: 18,
+  padding: 16,
+  borderWidth: 1,
+  borderColor: colors.borderGray,
+  marginBottom: 14,
+},
+
+mapActionHeader: {
+  flexDirection: "row",
+  alignItems: "flex-start",
+  gap: 10,
+  marginBottom: 14,
+},
+
+mapActionTitle: {
+  fontSize: 17,
+  fontWeight: "800",
+  color: colors.primary,
+  marginBottom: 3,
+},
+
+mapActionSubtitle: {
+  fontSize: 13,
+  lineHeight: 19,
+  color: colors.darkGray,
+  opacity: 0.75,
+},
+
+mapButtonRow: {
+  flexDirection: "row",
+  gap: 10,
+},
+
+mapSecondaryButton: {
+  flex: 1,
+  borderWidth: 1,
+  borderColor: colors.primary,
+  borderRadius: 14,
+  paddingVertical: 12,
+  alignItems: "center",
+  justifyContent: "center",
+  flexDirection: "row",
+  gap: 6,
+},
+
+mapPrimaryButton: {
+  flex: 1,
+  backgroundColor: colors.primary,
+  borderRadius: 14,
+  paddingVertical: 12,
+  alignItems: "center",
+  justifyContent: "center",
+  flexDirection: "row",
+  gap: 6,
+},
+
+mapSecondaryButtonText: {
+  color: colors.primary,
+  fontSize: 14,
+  fontWeight: "800",
+},
+
+mapPrimaryButtonText: {
+  color: colors.white,
+  fontSize: 14,
+  fontWeight: "800",
+},
 });

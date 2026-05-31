@@ -8,12 +8,6 @@ const placeSchema = new mongoose.Schema(
       trim: true,
     },
 
-    role: {
-      type: String,
-      enum: ["user", "admin"],
-      default: "user",
-    },
-
     slug: {
       type: String,
       required: true,
@@ -188,10 +182,103 @@ const placeSchema = new mongoose.Schema(
         default: "Point",
       },
       coordinates: {
-        type: [Number],
+        type: [Number], // [longitude, latitude]
         default: [0, 0],
       },
     },
+
+    distanceFromAddisKm: {
+      type: Number,
+      default: null,
+    },
+
+    travelTimeFromAddisHours: {
+      type: Number,
+      default: null,
+    },
+
+    recommendedTransport: {
+      type: [String],
+      default: [],
+    },
+
+    roadCondition: {
+      type: String,
+      enum: ["excellent", "good", "mixed", "rough", "seasonal"],
+    },
+
+    nearestAirport: {
+      type: String,
+      trim: true,
+    },
+
+    nearestTown: {
+      type: String,
+      trim: true,
+    },
+
+    googleMapsUrl: {
+      type: String,
+      trim: true,
+    },
+
+    isWeekendTrip: {
+      type: Boolean,
+      default: false,
+    },
+
+    weekendTripLevel: {
+      type: String,
+      enum: ["day-trip", "overnight", "2-3-days", "extended"],
+    },
+
+    experienceScores: {
+      adventure: {
+        type: Number,
+        min: 1,
+        max: 10,
+        default: 5,
+      },
+      culture: {
+        type: Number,
+        min: 1,
+        max: 10,
+        default: 5,
+      },
+      nature: {
+        type: Number,
+        min: 1,
+        max: 10,
+        default: 5,
+      },
+      photography: {
+        type: Number,
+        min: 1,
+        max: 10,
+        default: 5,
+      },
+      familyFriendly: {
+        type: Number,
+        min: 1,
+        max: 10,
+        default: 5,
+      },
+      accessibility: {
+        type: Number,
+        min: 1,
+        max: 10,
+        default: 5,
+      },
+    },
+
+  
+
+    collections: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Collection",
+      },
+    ],
 
     coverImage: {
       type: String,
@@ -317,7 +404,11 @@ placeSchema.index({
 });
 
 placeSchema.index({ location: "2dsphere" });
-
 placeSchema.index({ name: 1, region: 1 }, { unique: true });
+placeSchema.index({ featured: -1, featuredOrder: 1 });
+placeSchema.index({ category: 1, region: 1 });
+placeSchema.index({ isWeekendTrip: 1 });
+placeSchema.index({ ethiopiaScore: -1 });
+placeSchema.index({ popularityScore: -1 });
 
 module.exports = mongoose.model("Place", placeSchema);

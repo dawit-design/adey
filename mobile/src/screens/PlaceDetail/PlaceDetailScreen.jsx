@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
+  Linking,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -58,7 +59,7 @@ export default function PlaceDetailScreen({ route, navigation }) {
       trip.places?.some((item) => {
         const tripPlaceId = item.place?._id || item.place;
         return tripPlaceId === placeId;
-      })
+      }),
     );
   };
 
@@ -114,7 +115,10 @@ export default function PlaceDetailScreen({ route, navigation }) {
 
       await loadTripsForPlace(placeData._id);
     } catch (error) {
-      console.log("Failed to load place:", error.response?.data || error.message);
+      console.log(
+        "Failed to load place:",
+        error.response?.data || error.message,
+      );
     } finally {
       setLoading(false);
     }
@@ -132,7 +136,10 @@ export default function PlaceDetailScreen({ route, navigation }) {
         setIsSaved(true);
       }
     } catch (error) {
-      console.log("Failed to save/unsave:", error.response?.data || error.message);
+      console.log(
+        "Failed to save/unsave:",
+        error.response?.data || error.message,
+      );
     }
   };
 
@@ -148,7 +155,10 @@ export default function PlaceDetailScreen({ route, navigation }) {
         setIsWantToVisit(true);
       }
     } catch (error) {
-      console.log("Failed to update want to visit:", error.response?.data || error.message);
+      console.log(
+        "Failed to update want to visit:",
+        error.response?.data || error.message,
+      );
     }
   };
 
@@ -165,7 +175,10 @@ export default function PlaceDetailScreen({ route, navigation }) {
         setIsWantToVisit(false);
       }
     } catch (error) {
-      console.log("Failed to update visited:", error.response?.data || error.message);
+      console.log(
+        "Failed to update visited:",
+        error.response?.data || error.message,
+      );
     }
   };
 
@@ -177,7 +190,10 @@ export default function PlaceDetailScreen({ route, navigation }) {
       setIsAddedToTrip(checkIfPlaceIsInTrips(data, place?._id));
       setTripModalVisible(true);
     } catch (error) {
-      console.log("Failed to load trips:", error.response?.data || error.message);
+      console.log(
+        "Failed to load trips:",
+        error.response?.data || error.message,
+      );
     } finally {
       setTripLoading(false);
     }
@@ -196,13 +212,16 @@ export default function PlaceDetailScreen({ route, navigation }) {
       const updatedTrip = await addPlaceToTrip(tripId, place._id);
 
       const updatedTrips = trips.map((trip) =>
-        trip._id === updatedTrip._id ? updatedTrip : trip
+        trip._id === updatedTrip._id ? updatedTrip : trip,
       );
 
       setTrips(updatedTrips);
       setIsAddedToTrip(true);
     } catch (error) {
-      console.log("Failed to add to trip:", error.response?.data || error.message);
+      console.log(
+        "Failed to add to trip:",
+        error.response?.data || error.message,
+      );
     }
   };
 
@@ -221,9 +240,34 @@ export default function PlaceDetailScreen({ route, navigation }) {
       setIsAddedToTrip(true);
       setNewTripTitle("");
     } catch (error) {
-      console.log("Failed to create trip:", error.response?.data || error.message);
+      console.log(
+        "Failed to create trip:",
+        error.response?.data || error.message,
+      );
     }
   };
+
+const getMapQuery = () => {
+  if (!place) return "";
+
+  return encodeURIComponent(
+    [place.name, place.city, place.area, place.region, "Ethiopia"]
+      .filter(Boolean)
+      .join(" ")
+  );
+};
+
+const openGoogleMapSearch = () => {
+  const mapQuery = getMapQuery();
+  const url = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+  Linking.openURL(url);
+};
+
+const openDirectionsFromAddis = () => {
+  const mapQuery = getMapQuery();
+  const url = `https://www.google.com/maps/dir/?api=1&origin=Addis+Ababa,Ethiopia&destination=${mapQuery}`;
+  Linking.openURL(url);
+};
 
   const shouldShowHiddenGem =
     place?.tourismPriority === "hidden-gem" ||
@@ -291,7 +335,9 @@ export default function PlaceDetailScreen({ route, navigation }) {
             <View style={styles.scoreCard}>
               <View style={styles.scoreHeader}>
                 <Text style={styles.scoreLabel}>Ethiopia Score</Text>
-                <Text style={styles.scoreNumber}>{place.ethiopiaScore}/100</Text>
+                <Text style={styles.scoreNumber}>
+                  {place.ethiopiaScore}/100
+                </Text>
               </View>
 
               <Text style={styles.scoreReason}>
@@ -366,7 +412,9 @@ export default function PlaceDetailScreen({ route, navigation }) {
               onPress={toggleVisited}
             >
               <Ionicons
-                name={isVisited ? "checkmark-circle" : "checkmark-circle-outline"}
+                name={
+                  isVisited ? "checkmark-circle" : "checkmark-circle-outline"
+                }
                 size={18}
                 color={isVisited ? "#fff" : "#556B2F"}
               />
@@ -429,6 +477,38 @@ export default function PlaceDetailScreen({ route, navigation }) {
             </View>
           </View>
 
+          <View style={styles.mapActionCard}>
+            <View style={styles.mapActionHeader}>
+              <Ionicons name="navigate-outline" size={22} color="#556B2F" />
+
+              <View style={{ flex: 1 }}>
+                <Text style={styles.mapActionTitle}>How to get there</Text>
+                <Text style={styles.mapActionSubtitle}>
+                  View this place on Google Maps or get directions from Addis
+                  Ababa.
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.mapButtonRow}>
+              <TouchableOpacity
+                style={styles.mapSecondaryButton}
+                onPress={openGoogleMapSearch}
+              >
+                <Ionicons name="location-outline" size={18} color="#556B2F" />
+                <Text style={styles.mapSecondaryButtonText}>View on Map</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.mapPrimaryButton}
+                onPress={openDirectionsFromAddis}
+              >
+                <Ionicons name="navigate" size={18} color="#fff" />
+                <Text style={styles.mapPrimaryButtonText}>Directions</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
           {place.localTips?.length > 0 ? (
             <Section title="Local tips">
               {place.localTips.map((item, index) => (
@@ -444,7 +524,11 @@ export default function PlaceDetailScreen({ route, navigation }) {
             <Section title="Before you go">
               {place.travelWarnings.map((item, index) => (
                 <View key={index} style={styles.warningRow}>
-                  <Ionicons name="alert-circle-outline" size={17} color="#9A6B00" />
+                  <Ionicons
+                    name="alert-circle-outline"
+                    size={17}
+                    color="#9A6B00"
+                  />
                   <Text style={styles.warningText}>{item}</Text>
                 </View>
               ))}
@@ -522,7 +606,9 @@ export default function PlaceDetailScreen({ route, navigation }) {
                         disabled={alreadyInThisTrip}
                       >
                         <View>
-                          <Text style={styles.tripOptionTitle}>{trip.title}</Text>
+                          <Text style={styles.tripOptionTitle}>
+                            {trip.title}
+                          </Text>
                           <Text style={styles.tripOptionMeta}>
                             {alreadyInThisTrip
                               ? "Already added"
@@ -538,9 +624,7 @@ export default function PlaceDetailScreen({ route, navigation }) {
                           }
                           size={22}
                           color={
-                            alreadyInThisTrip
-                              ? colors.primary
-                              : colors.darkGray
+                            alreadyInThisTrip ? colors.primary : colors.darkGray
                           }
                         />
                       </TouchableOpacity>
