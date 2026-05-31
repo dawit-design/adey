@@ -15,16 +15,29 @@ export default StyleSheet.create({
   },
 
   hero: {
-    height: 310,
+    height: 340,
     backgroundColor: colors.primary,
     justifyContent: "flex-end",
     padding: 20,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
+    overflow: "hidden",
+  },
+
+  heroImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: "100%",
+    height: "100%",
+  },
+
+  heroDarkOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.36)",
   },
 
   heroOverlay: {
     paddingBottom: 8,
+    zIndex: 2,
   },
 
   backButton: {
@@ -34,9 +47,10 @@ export default StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: 21,
-    backgroundColor: "rgba(0,0,0,0.35)",
+    backgroundColor: "rgba(0,0,0,0.38)",
     alignItems: "center",
     justifyContent: "center",
+    zIndex: 3,
   },
 
   saveButton: {
@@ -46,9 +60,10 @@ export default StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: 21,
-    backgroundColor: "rgba(0,0,0,0.35)",
+    backgroundColor: "rgba(0,0,0,0.38)",
     alignItems: "center",
     justifyContent: "center",
+    zIndex: 3,
   },
 
   type: {
@@ -94,6 +109,51 @@ export default StyleSheet.create({
     color: colors.darkGray,
     fontWeight: "500",
     marginBottom: 18,
+  },
+
+  gallerySection: {
+    backgroundColor: colors.white,
+    borderRadius: 20,
+    padding: 16,
+    marginBottom: 18,
+    borderWidth: 1,
+    borderColor: colors.borderGray,
+  },
+
+  galleryHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+
+  galleryTitle: {
+    fontSize: 20,
+    fontWeight: "900",
+    color: colors.primary,
+  },
+
+  galleryCount: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: colors.darkGray,
+    opacity: 0.75,
+  },
+
+  galleryRow: {
+    flexDirection: "row",
+    gap: 10,
+  },
+
+  galleryImage: {
+    width: 160,
+    height: 118,
+    borderRadius: 16,
+    backgroundColor: colors.lightGray,
+  },
+
+  galleryImageLarge: {
+    width: 220,
   },
 
   storyCard: {
@@ -279,6 +339,76 @@ export default StyleSheet.create({
     textTransform: "capitalize",
   },
 
+  mapActionCard: {
+    backgroundColor: colors.white,
+    borderRadius: 18,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: colors.borderGray,
+    marginBottom: 14,
+  },
+
+  mapActionHeader: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+    marginBottom: 14,
+  },
+
+  mapActionTitle: {
+    fontSize: 17,
+    fontWeight: "800",
+    color: colors.primary,
+    marginBottom: 3,
+  },
+
+  mapActionSubtitle: {
+    fontSize: 13,
+    lineHeight: 19,
+    color: colors.darkGray,
+    opacity: 0.75,
+  },
+
+  mapButtonRow: {
+    flexDirection: "row",
+    gap: 10,
+  },
+
+  mapSecondaryButton: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderRadius: 14,
+    paddingVertical: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    gap: 6,
+  },
+
+  mapPrimaryButton: {
+    flex: 1,
+    backgroundColor: colors.primary,
+    borderRadius: 14,
+    paddingVertical: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    gap: 6,
+  },
+
+  mapSecondaryButtonText: {
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: "800",
+  },
+
+  mapPrimaryButtonText: {
+    color: colors.white,
+    fontSize: 14,
+    fontWeight: "800",
+  },
+
   section: {
     backgroundColor: colors.white,
     borderRadius: 18,
@@ -293,12 +423,6 @@ export default StyleSheet.create({
     fontWeight: "800",
     color: colors.primary,
     marginBottom: 10,
-  },
-
-  body: {
-    fontSize: 16,
-    lineHeight: 25,
-    color: colors.darkGray,
   },
 
   bullet: {
@@ -469,73 +593,4 @@ export default StyleSheet.create({
     fontSize: 14,
     fontWeight: "800",
   },
-  mapActionCard: {
-  backgroundColor: colors.white,
-  borderRadius: 18,
-  padding: 16,
-  borderWidth: 1,
-  borderColor: colors.borderGray,
-  marginBottom: 14,
-},
-
-mapActionHeader: {
-  flexDirection: "row",
-  alignItems: "flex-start",
-  gap: 10,
-  marginBottom: 14,
-},
-
-mapActionTitle: {
-  fontSize: 17,
-  fontWeight: "800",
-  color: colors.primary,
-  marginBottom: 3,
-},
-
-mapActionSubtitle: {
-  fontSize: 13,
-  lineHeight: 19,
-  color: colors.darkGray,
-  opacity: 0.75,
-},
-
-mapButtonRow: {
-  flexDirection: "row",
-  gap: 10,
-},
-
-mapSecondaryButton: {
-  flex: 1,
-  borderWidth: 1,
-  borderColor: colors.primary,
-  borderRadius: 14,
-  paddingVertical: 12,
-  alignItems: "center",
-  justifyContent: "center",
-  flexDirection: "row",
-  gap: 6,
-},
-
-mapPrimaryButton: {
-  flex: 1,
-  backgroundColor: colors.primary,
-  borderRadius: 14,
-  paddingVertical: 12,
-  alignItems: "center",
-  justifyContent: "center",
-  flexDirection: "row",
-  gap: 6,
-},
-
-mapSecondaryButtonText: {
-  color: colors.primary,
-  fontSize: 14,
-  fontWeight: "800",
-},
-
-mapPrimaryButtonText: {
-  color: colors.white,
-  fontSize: 14,
-  fontWeight: "800",
-},
 });

@@ -71,3 +71,27 @@ export const deletePlaceById = async (id) => {
   const response = await axiosInstance.delete(`/api/places/${id}`);
   return response.data;
 };
+
+export const uploadPlaceImage = async (id, image, imageType = "cover") => {
+  const formData = new FormData();
+
+  formData.append("image", {
+    uri: image.uri,
+    name: image.fileName || `place-${Date.now()}.jpg`,
+    type: image.mimeType || "image/jpeg",
+  });
+
+  formData.append("imageType", imageType);
+
+  const response = await axiosInstance.post(
+    `/api/places/${id}/upload-image`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+
+  return response.data;
+};

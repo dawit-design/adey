@@ -25,6 +25,8 @@ export default function ProfileScreen({ navigation }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const isAdmin = user?.role === "admin";
+
   useFocusEffect(
     useCallback(() => {
       let active = true;
@@ -174,8 +176,44 @@ export default function ProfileScreen({ navigation }) {
                     "Explorer"}
                 </Text>
               </View>
+
+              {isAdmin ? (
+                <View style={styles.profileMetaRow}>
+                  <Ionicons
+                    name="shield-checkmark-outline"
+                    size={15}
+                    color={colors.primary}
+                  />
+                  <Text style={styles.profileMetaText}>Admin</Text>
+                </View>
+              ) : null}
             </View>
           </View>
+
+          {isAdmin ? (
+            <TouchableOpacity
+              style={styles.passportCard}
+              onPress={() => navigation.navigate("AdminPlaces")}
+              activeOpacity={0.85}
+            >
+              <View style={styles.passportIconBox}>
+                <Ionicons
+                  name="settings-outline"
+                  size={24}
+                  color={colors.white}
+                />
+              </View>
+
+              <View style={styles.passportTextBox}>
+                <Text style={styles.passportTitle}>Admin: Manage Places</Text>
+                <Text style={styles.passportSubtitle}>
+                  Create, edit, unpublish, and upload images for places.
+                </Text>
+              </View>
+
+              <Ionicons name="chevron-forward" size={22} color={colors.white} />
+            </TouchableOpacity>
+          ) : null}
 
           <TouchableOpacity
             style={styles.passportCard}

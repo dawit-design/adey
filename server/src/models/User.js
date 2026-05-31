@@ -11,14 +11,20 @@ const userSchema = new mongoose.Schema(
       trim: true,
       minlength: [3, "Username must be at least 3 characters"],
       maxlength: [30, "Username can be at most 30 characters"],
-      match: [/^[a-zA-Z0-9._-]+$/, "Username can only contain letters, numbers, ., _, and -"],
+      match: [
+        /^[a-zA-Z0-9._-]+$/,
+        "Username can only contain letters, numbers, ., _, and -",
+      ],
     },
     email: {
       type: String,
       required: [true, "Email is required"],
       unique: true,
       lowercase: true,
-      match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Please provide a valid email"],
+      match: [
+        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+        "Please provide a valid email",
+      ],
     },
     password_hash: {
       type: String,
@@ -59,6 +65,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["active", "suspended", "deleted"],
       default: "active",
+    },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+      select: true,
     },
     profile_photo: {
       type: String,
@@ -108,7 +120,7 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 userSchema.pre("save", async function () {
@@ -135,10 +147,10 @@ userSchema.methods.updateProfileCompletion = function () {
   ];
 
   const completedFields = phase2Fields.filter(
-    (field) => this[field] !== null && this[field] !== undefined
+    (field) => this[field] !== null && this[field] !== undefined,
   );
   this.profile_completion_percentage = Math.round(
-    (completedFields.length / phase2Fields.length) * 100
+    (completedFields.length / phase2Fields.length) * 100,
   );
   return this.profile_completion_percentage;
 };

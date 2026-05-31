@@ -1,5 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
+
+dotenv.config();
+
 const cors = require("cors");
 const morgan = require("morgan");
 
@@ -10,7 +13,6 @@ const savedRoutes = require("./routes/savedRoutes");
 const collectionRoutes = require("./routes/collectionRoutes");
 const passportRoutes = require("./routes/passportRoutes");
 const tripRoutes = require("./routes/tripRoutes");
-dotenv.config();
 
 const app = express();
 
@@ -22,9 +24,7 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/adey";
 
 connectDB(MONGO_URI).then((connected) => {
   if (!connected) {
-    console.warn(
-      "MongoDB connection failed. The server is still running, but /api/places will return sample data if the database is unavailable."
-    );
+    console.warn("MongoDB connection failed.");
   }
 });
 
@@ -36,9 +36,7 @@ app.use("/api/passport", passportRoutes);
 app.use("/api/trips", tripRoutes);
 
 app.get("/", (req, res) => {
-  res.json({
-    message: "Welcome to Adey API",
-  });
+  res.json({ message: "Welcome to Adey API" });
 });
 
 const PORT = process.env.PORT || 5050;

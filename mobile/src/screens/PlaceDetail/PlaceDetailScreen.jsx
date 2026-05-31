@@ -8,6 +8,7 @@ import {
   Modal,
   TextInput,
   Linking,
+  Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -59,7 +60,7 @@ export default function PlaceDetailScreen({ route, navigation }) {
       trip.places?.some((item) => {
         const tripPlaceId = item.place?._id || item.place;
         return tripPlaceId === placeId;
-      }),
+      })
     );
   };
 
@@ -117,7 +118,7 @@ export default function PlaceDetailScreen({ route, navigation }) {
     } catch (error) {
       console.log(
         "Failed to load place:",
-        error.response?.data || error.message,
+        error.response?.data || error.message
       );
     } finally {
       setLoading(false);
@@ -138,7 +139,7 @@ export default function PlaceDetailScreen({ route, navigation }) {
     } catch (error) {
       console.log(
         "Failed to save/unsave:",
-        error.response?.data || error.message,
+        error.response?.data || error.message
       );
     }
   };
@@ -157,7 +158,7 @@ export default function PlaceDetailScreen({ route, navigation }) {
     } catch (error) {
       console.log(
         "Failed to update want to visit:",
-        error.response?.data || error.message,
+        error.response?.data || error.message
       );
     }
   };
@@ -177,7 +178,7 @@ export default function PlaceDetailScreen({ route, navigation }) {
     } catch (error) {
       console.log(
         "Failed to update visited:",
-        error.response?.data || error.message,
+        error.response?.data || error.message
       );
     }
   };
@@ -190,10 +191,7 @@ export default function PlaceDetailScreen({ route, navigation }) {
       setIsAddedToTrip(checkIfPlaceIsInTrips(data, place?._id));
       setTripModalVisible(true);
     } catch (error) {
-      console.log(
-        "Failed to load trips:",
-        error.response?.data || error.message,
-      );
+      console.log("Failed to load trips:", error.response?.data || error.message);
     } finally {
       setTripLoading(false);
     }
@@ -212,16 +210,13 @@ export default function PlaceDetailScreen({ route, navigation }) {
       const updatedTrip = await addPlaceToTrip(tripId, place._id);
 
       const updatedTrips = trips.map((trip) =>
-        trip._id === updatedTrip._id ? updatedTrip : trip,
+        trip._id === updatedTrip._id ? updatedTrip : trip
       );
 
       setTrips(updatedTrips);
       setIsAddedToTrip(true);
     } catch (error) {
-      console.log(
-        "Failed to add to trip:",
-        error.response?.data || error.message,
-      );
+      console.log("Failed to add to trip:", error.response?.data || error.message);
     }
   };
 
@@ -240,38 +235,40 @@ export default function PlaceDetailScreen({ route, navigation }) {
       setIsAddedToTrip(true);
       setNewTripTitle("");
     } catch (error) {
-      console.log(
-        "Failed to create trip:",
-        error.response?.data || error.message,
-      );
+      console.log("Failed to create trip:", error.response?.data || error.message);
     }
   };
 
-const getMapQuery = () => {
-  if (!place) return "";
+  const getMapQuery = () => {
+    if (!place) return "";
 
-  return encodeURIComponent(
-    [place.name, place.city, place.area, place.region, "Ethiopia"]
-      .filter(Boolean)
-      .join(" ")
-  );
-};
+    return encodeURIComponent(
+      [place.name, place.city, place.area, place.region, "Ethiopia"]
+        .filter(Boolean)
+        .join(" ")
+    );
+  };
 
-const openGoogleMapSearch = () => {
-  const mapQuery = getMapQuery();
-  const url = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
-  Linking.openURL(url);
-};
+  const openGoogleMapSearch = () => {
+    const mapQuery = getMapQuery();
+    const url = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+    Linking.openURL(url);
+  };
 
-const openDirectionsFromAddis = () => {
-  const mapQuery = getMapQuery();
-  const url = `https://www.google.com/maps/dir/?api=1&origin=Addis+Ababa,Ethiopia&destination=${mapQuery}`;
-  Linking.openURL(url);
-};
+  const openDirectionsFromAddis = () => {
+    const mapQuery = getMapQuery();
+    const url = `https://www.google.com/maps/dir/?api=1&origin=Addis+Ababa,Ethiopia&destination=${mapQuery}`;
+    Linking.openURL(url);
+  };
 
   const shouldShowHiddenGem =
     place?.tourismPriority === "hidden-gem" ||
     (place?.hiddenGemScore && place.hiddenGemScore >= 8);
+
+  const galleryImages = [
+    ...(place?.coverImage ? [place.coverImage] : []),
+    ...(place?.images || []),
+  ].filter(Boolean);
 
   if (loading) {
     return (
@@ -293,6 +290,12 @@ const openDirectionsFromAddis = () => {
     <>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.hero}>
+          {place.coverImage ? (
+            <Image source={{ uri: place.coverImage }} style={styles.heroImage} resizeMode="cover"/>
+          ) : null}
+
+          <View style={styles.heroDarkOverlay} />
+
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}
@@ -324,6 +327,32 @@ const openDirectionsFromAddis = () => {
         <View style={styles.content}>
           <Text style={styles.shortDescription}>{place.shortDescription}</Text>
 
+          {galleryImages.length > 0 ? (
+            <View style={styles.gallerySection}>
+              <View style={styles.galleryHeader}>
+                <Text style={styles.galleryTitle}>Photos</Text>
+                <Text style={styles.galleryCount}>
+                  {galleryImages.length} image{galleryImages.length > 1 ? "s" : ""}
+                </Text>
+              </View>
+
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <View style={styles.galleryRow}>
+                  {galleryImages.map((imageUrl, index) => (
+                    <Image
+                      key={`${imageUrl}-${index}`}
+                      source={{ uri: imageUrl }}
+                      style={[
+                        styles.galleryImage,
+                        index === 0 && styles.galleryImageLarge,
+                      ]}
+                    />
+                  ))}
+                </View>
+              </ScrollView>
+            </View>
+          ) : null}
+
           {place.story ? (
             <View style={styles.storyCard}>
               <Text style={styles.storyLabel}>Why it matters</Text>
@@ -335,9 +364,7 @@ const openDirectionsFromAddis = () => {
             <View style={styles.scoreCard}>
               <View style={styles.scoreHeader}>
                 <Text style={styles.scoreLabel}>Ethiopia Score</Text>
-                <Text style={styles.scoreNumber}>
-                  {place.ethiopiaScore}/100
-                </Text>
+                <Text style={styles.scoreNumber}>{place.ethiopiaScore}/100</Text>
               </View>
 
               <Text style={styles.scoreReason}>

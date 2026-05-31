@@ -1,19 +1,97 @@
+const fs = require("fs");
 const Place = require("../models/Place");
 const slugify = require("../utils/slugify");
 const cloudinary = require("../config/cloudinary");
 
+const allowedPlaceFields = [
+  "name",
+  "slug",
+  "country",
+  "type",
+  "category",
+  "region",
+  "city",
+  "area",
+  "shortDescription",
+  "story",
+  "highlights",
+  "activities",
+  "amenities",
+  "tags",
+  "localTips",
+  "travelWarnings",
+  "bestForPhotography",
+  "bestForFamilies",
+  "hiddenGemScore",
+  "difficultyLevel",
+  "bestTimeToVisit",
+  "seasonality",
+  "idealFor",
+  "estimatedVisitDuration",
+  "priceRange",
+  "location",
+  "distanceFromAddisKm",
+  "travelTimeFromAddisHours",
+  "recommendedTransport",
+  "roadCondition",
+  "nearestAirport",
+  "nearestTown",
+  "googleMapsUrl",
+  "isWeekendTrip",
+  "weekendTripLevel",
+  "experienceScores",
+  "collections",
+  "coverImage",
+  "images",
+  "nearbyPlaces",
+  "featured",
+  "featuredOrder",
+  "isNewOrGrowing",
+  "isCurated",
+  "tourismPriority",
+  "sourceLinks",
+  "lastVerifiedAt",
+  "popularityScore",
+  "ethiopiaScore",
+  "scoreReason",
+  "rating",
+  "apiVisibility",
+  "status",
+];
+
+const pickPlaceFields = (body) => {
+  const data = {};
+
+  allowedPlaceFields.forEach((field) => {
+    if (body[field] !== undefined) {
+      data[field] = body[field];
+    }
+  });
+
+  return data;
+};
+
+const cleanupLocalFile = (filePath) => {
+  if (filePath && fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath);
+  }
+};
+
 exports.createPlace = async (req, res) => {
   try {
-    const slug = req.body.slug || slugify(req.body.name);
+    const data = pickPlaceFields(req.body);
 
-    const place = await Place.create({
-      ...req.body,
-      slug,
-    });
+    if (!data.name) {
+      return res.status(400).json({ message: "Place name is required" });
+    }
 
-    res.status(201).json(place);
+    data.slug = data.slug || slugify(data.name);
+
+    const place = await Place.create(data);
+
+    return res.status(201).json(place);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -74,9 +152,9 @@ exports.getPlaces = async (req, res) => {
       createdAt: -1,
     });
 
-    res.status(200).json(places);
+    return res.status(200).json(places);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -91,19 +169,21 @@ exports.getPlaceBySlug = async (req, res) => {
       return res.status(404).json({ message: "Place not found" });
     }
 
-    res.status(200).json(place);
+    return res.status(200).json(place);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
 exports.updatePlace = async (req, res) => {
   try {
-    if (req.body.name && !req.body.slug) {
-      req.body.slug = slugify(req.body.name);
+    const data = pickPlaceFields(req.body);
+
+    if (data.name && !data.slug) {
+      data.slug = slugify(data.name);
     }
 
-    const place = await Place.findByIdAndUpdate(req.params.id, req.body, {
+    const place = await Place.findByIdAndUpdate(req.params.id, data, {
       new: true,
       runValidators: true,
     });
@@ -112,43 +192,51 @@ exports.updatePlace = async (req, res) => {
       return res.status(404).json({ message: "Place not found" });
     }
 
-    res.status(200).json(place);
+    return res.status(200).json(place);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
 exports.deletePlace = async (req, res) => {
   try {
-    const place = await Place.findByIdAndDelete(req.params.id);
+    const place = await Place.findByIdAndUpdate(
+      req.params.id,
+      { status: "draft" },
+      { new: true }
+    );
 
     if (!place) {
       return res.status(404).json({ message: "Place not found" });
     }
 
-    res.status(200).json({ message: "Place deleted successfully" });
+    return res.status(200).json({
+      message: "Place unpublished successfully",
+      place,
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
 exports.uploadPlaceImage = async (req, res) => {
   try {
-    const { imageType } = req.body; // "cover" or "gallery"
+    const { imageType } = req.body;
 
     if (!req.file) {
       return res.status(400).json({ message: "No image uploaded" });
     }
 
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: "places",
-    });
-
     const place = await Place.findById(req.params.id);
 
     if (!place) {
+      cleanupLocalFile(req.file.path);
       return res.status(404).json({ message: "Place not found" });
     }
+
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "places",
+    });
 
     if (imageType === "cover") {
       place.coverImage = result.secure_url;
@@ -158,8 +246,12 @@ exports.uploadPlaceImage = async (req, res) => {
 
     await place.save();
 
-    res.status(200).json(place);
+    cleanupLocalFile(req.file.path);
+
+    return res.status(200).json(place);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    cleanupLocalFile(req.file?.path);
+
+    return res.status(500).json({ message: error.message });
   }
 };

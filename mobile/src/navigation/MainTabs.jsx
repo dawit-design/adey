@@ -14,6 +14,9 @@ import PlaceDetailScreen from "../screens/PlaceDetail/PlaceDetailScreen";
 import CollectionDetailsScreen from "../screens/Collection/CollectionDetailsScreen";
 import PassportScreen from "../screens/Passport/PassportScreen";
 
+import AdminPlacesScreen from "../screens/Admin/AdminPlacesScreen";
+import PlaceFormScreen from "../screens/Admin/PlaceFormScreen";
+
 import { colors } from "../styles/theme";
 
 const Tab = createBottomTabNavigator();
@@ -66,6 +69,9 @@ function ProfileStack() {
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="Passport" component={PassportScreen} />
       <Stack.Screen name="PlaceDetails" component={PlaceDetailScreen} />
+
+      <Stack.Screen name="AdminPlaces" component={AdminPlacesScreen} />
+      <Stack.Screen name="PlaceForm" component={PlaceFormScreen} />
     </Stack.Navigator>
   );
 }

@@ -17,9 +17,9 @@ const authMiddleware = async (req, res, next) => {
     );
     const user = await User.findById(decoded.id);
 
-    if (!user || user.account_status === "deleted") {
-      return res.status(401).json({ message: "Unauthorized: invalid user" });
-    }
+    if (!user || user.account_status !== "active") {
+  return res.status(401).json({ message: "Unauthorized: invalid user" });
+}
 
     req.user = {
       id: user._id,
