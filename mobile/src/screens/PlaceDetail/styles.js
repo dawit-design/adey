@@ -593,4 +593,29 @@ export default StyleSheet.create({
     fontSize: 14,
     fontWeight: "800",
   },
+    imageModalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.92)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+
+  fullscreenImage: {
+    width: "100%",
+    height: "82%",
+    borderRadius: 18,
+  },
+
+  closeImageButton: {
+    position: "absolute",
+    top: 54,
+    right: 24,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });

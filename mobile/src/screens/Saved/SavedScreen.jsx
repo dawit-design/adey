@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -145,7 +146,7 @@ export default function SavedScreen() {
   }
 
   return (
-    <View style={styles.container}>
+     <SafeAreaView style={styles.container} edges={["top"]}>
       <View style={styles.hero}>
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
           <Ionicons name="arrow-back" size={22} color="#fff" />
@@ -186,6 +187,6 @@ export default function SavedScreen() {
           contentContainerStyle={styles.listContent}
         />
       )}
-    </View>
+      </SafeAreaView>
   );
 }

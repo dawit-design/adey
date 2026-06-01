@@ -10,6 +10,7 @@ import {
   Linking,
   Image,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
 import styles from "./styles";
@@ -50,6 +51,8 @@ export default function PlaceDetailScreen({ route, navigation }) {
   const [tripModalVisible, setTripModalVisible] = useState(false);
   const [newTripTitle, setNewTripTitle] = useState("");
   const [tripLoading, setTripLoading] = useState(false);
+
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     loadPlace();
@@ -287,11 +290,15 @@ export default function PlaceDetailScreen({ route, navigation }) {
   }
 
   return (
-    <>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.hero}>
           {place.coverImage ? (
-            <Image source={{ uri: place.coverImage }} style={styles.heroImage} resizeMode="cover"/>
+            <Image
+              source={{ uri: place.coverImage }}
+              style={styles.heroImage}
+              resizeMode="stretch"
+            />
           ) : null}
 
           <View style={styles.heroDarkOverlay} />
@@ -332,21 +339,28 @@ export default function PlaceDetailScreen({ route, navigation }) {
               <View style={styles.galleryHeader}>
                 <Text style={styles.galleryTitle}>Photos</Text>
                 <Text style={styles.galleryCount}>
-                  {galleryImages.length} image{galleryImages.length > 1 ? "s" : ""}
+                  {galleryImages.length} image
+                  {galleryImages.length > 1 ? "s" : ""}
                 </Text>
               </View>
 
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View style={styles.galleryRow}>
                   {galleryImages.map((imageUrl, index) => (
-                    <Image
+                    <TouchableOpacity
                       key={`${imageUrl}-${index}`}
-                      source={{ uri: imageUrl }}
-                      style={[
-                        styles.galleryImage,
-                        index === 0 && styles.galleryImageLarge,
-                      ]}
-                    />
+                      activeOpacity={0.9}
+                      onPress={() => setSelectedImage(imageUrl)}
+                    >
+                      <Image
+                        source={{ uri: imageUrl }}
+                        style={[
+                          styles.galleryImage,
+                          index === 0 && styles.galleryImageLarge,
+                        ]}
+                        resizeMode="cover"
+                      />
+                    </TouchableOpacity>
                   ))}
                 </View>
               </ScrollView>
@@ -599,6 +613,32 @@ export default function PlaceDetailScreen({ route, navigation }) {
       </ScrollView>
 
       <Modal
+        visible={!!selectedImage}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSelectedImage(null)}
+      >
+        <TouchableOpacity
+          style={styles.imageModalOverlay}
+          activeOpacity={1}
+          onPress={() => setSelectedImage(null)}
+        >
+          <Image
+            source={{ uri: selectedImage }}
+            style={styles.fullscreenImage}
+            resizeMode="contain"
+          />
+
+          <TouchableOpacity
+            style={styles.closeImageButton}
+            onPress={() => setSelectedImage(null)}
+          >
+            <Ionicons name="close" size={30} color="#fff" />
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
+
+      <Modal
         visible={tripModalVisible}
         transparent
         animationType="slide"
@@ -687,7 +727,7 @@ export default function PlaceDetailScreen({ route, navigation }) {
           </View>
         </View>
       </Modal>
-    </>
+    </SafeAreaView>
   );
 }
 
