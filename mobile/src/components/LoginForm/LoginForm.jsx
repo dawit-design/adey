@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   Text,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, globalStyles } from '../../styles/theme';
@@ -20,14 +19,18 @@ export default function LoginForm({ onSwitchToRegister, onLoginSuccess }) {
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleLogin = async () => {
+    setErrorMessage('');
+
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      setErrorMessage('Please enter both email and password.');
       return;
     }
 
     setLoading(true);
+
     try {
       const result = await login({ email, password });
 
@@ -39,49 +42,79 @@ export default function LoginForm({ onSwitchToRegister, onLoginSuccess }) {
           await saveUser(result.user);
         }
 
-        Alert.alert('Success', 'Login successful!');
         onLoginSuccess && onLoginSuccess(result);
       } else {
-        Alert.alert('Error', 'No token received from server');
+        setErrorMessage('We could not sign you in. Please try again.');
       }
     } catch (error) {
       console.error('Login error:', error);
-      Alert.alert('Login Failed', error.response?.data?.message || error.message);
+
+      setErrorMessage(
+        error.response?.data?.message ||
+          'Incorrect email or password. Please check and try again.'
+      );
     } finally {
       setLoading(false);
     }
+  };
+
+  const clearErrorAndSetEmail = (value) => {
+    if (errorMessage) setErrorMessage('');
+    setEmail(value);
+  };
+
+  const clearErrorAndSetPassword = (value) => {
+    if (errorMessage) setErrorMessage('');
+    setPassword(value);
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.inputWrapper}>
         <Text style={styles.label}>Email</Text>
-        <View style={styles.passwordRow}>
+        <View
+          style={[
+            styles.passwordRow,
+            emailFocused && styles.inputFocused,
+            errorMessage && styles.inputError,
+          ]}
+        >
           <TextInput
             style={[globalStyles.input, styles.input]}
             placeholder="Enter your email"
             placeholderTextColor={colors.borderGray}
             value={email}
-            onChangeText={setEmail}
+            onChangeText={clearErrorAndSetEmail}
             onFocus={() => setEmailFocused(true)}
             onBlur={() => setEmailFocused(false)}
             keyboardType="email-address"
             autoCapitalize="none"
             editable={!loading}
           />
-          <Ionicons name="mail-outline" size={20} color={colors.primary} style={styles.iconButton} />
+          <Ionicons
+            name="mail-outline"
+            size={20}
+            color={errorMessage ? '#B42318' : colors.primary}
+            style={styles.iconButton}
+          />
         </View>
       </View>
 
       <View style={styles.inputWrapper}>
         <Text style={styles.label}>Password</Text>
-        <View style={styles.passwordRow}>
+        <View
+          style={[
+            styles.passwordRow,
+            passwordFocused && styles.inputFocused,
+            errorMessage && styles.inputError,
+          ]}
+        >
           <TextInput
             style={[globalStyles.input, styles.input]}
             placeholder="Enter your password"
             placeholderTextColor={colors.borderGray}
             value={password}
-            onChangeText={setPassword}
+            onChangeText={clearErrorAndSetPassword}
             onFocus={() => setPasswordFocused(true)}
             onBlur={() => setPasswordFocused(false)}
             secureTextEntry={!showPassword}
@@ -90,15 +123,23 @@ export default function LoginForm({ onSwitchToRegister, onLoginSuccess }) {
           <TouchableOpacity
             style={styles.iconButton}
             onPress={() => setShowPassword((value) => !value)}
+            disabled={loading}
           >
             <Ionicons
               name={showPassword ? 'eye-off-outline' : 'eye-outline'}
               size={22}
-              color={colors.darkGray}
+              color={errorMessage ? '#B42318' : colors.darkGray}
             />
           </TouchableOpacity>
         </View>
       </View>
+
+      {errorMessage ? (
+        <View style={styles.errorBox}>
+          <Ionicons name="alert-circle-outline" size={18} color="#B42318" />
+          <Text style={styles.errorText}>{errorMessage}</Text>
+        </View>
+      ) : null}
 
       <TouchableOpacity
         style={[styles.loginButton, loading && styles.buttonDisabled]}
@@ -120,7 +161,7 @@ export default function LoginForm({ onSwitchToRegister, onLoginSuccess }) {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.forgotPasswordContainer}>
+      <TouchableOpacity style={styles.forgotPasswordContainer} disabled={loading}>
         <Text style={styles.forgotPasswordText}>Forgot password?</Text>
       </TouchableOpacity>
     </View>

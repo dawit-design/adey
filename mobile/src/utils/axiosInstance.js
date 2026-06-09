@@ -2,18 +2,21 @@ import axios from "axios";
 import { Platform } from "react-native";
 
 const getBaseUrl = () => {
-  const port = 5050;
+  const port = process.env.EXPO_PUBLIC_API_PORT || 5050;
+  const host = process.env.EXPO_PUBLIC_API_HOST || "localhost";
 
   if (Platform.OS === "android") {
     return `http://10.0.2.2:${port}`;
   }
 
-  if (Platform.OS === "ios" || Platform.OS === "web") {
+  if (Platform.OS === "web") {
     return `http://localhost:${port}`;
   }
 
-  return `http://<YOUR_COMPUTER_IP>:${port}`;
+  return `http://${host}:${port}`;
 };
+
+console.log("API Base URL:", getBaseUrl());
 
 const axiosInstance = axios.create({
   baseURL: getBaseUrl(),

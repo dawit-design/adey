@@ -62,4 +62,24 @@ export default StyleSheet.create({
     color: colors.primary,
     fontWeight: '500',
   },
+  errorBox: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  backgroundColor: '#FEECEC',
+  borderColor: '#F5A3A3',
+  borderWidth: 1,
+  borderRadius: 10,
+  paddingVertical: 10,
+  paddingHorizontal: 12,
+  marginBottom: 14,
+  gap: 8,
+},
+
+errorText: {
+  flex: 1,
+  fontSize: 13,
+  lineHeight: 18,
+  color: '#B42318',
+  fontWeight: '500',
+},
 });

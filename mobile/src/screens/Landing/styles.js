@@ -49,17 +49,19 @@ export default StyleSheet.create({
   },
 
   formTitle: {
-    fontSize: 24,
-    lineHeight: 30,
-    fontWeight: "900",
-    color: colors.primary,
-    marginBottom: 4,
-  },
+  fontSize: 24,
+  lineHeight: 30,
+  fontWeight: "900",
+  color: colors.primary,
+  marginBottom: 4,
+  textAlign: "center",
+},
 
-  formSubtitle: {
-    fontSize: 14,
-    lineHeight: 20,
-    color: colors.mediumGray || colors.darkGray,
-    marginBottom: 14,
-  },
+formSubtitle: {
+  fontSize: 14,
+  lineHeight: 20,
+  color: colors.mediumGray || colors.darkGray,
+  marginBottom: 14,
+  textAlign: "center",
+},
 });
