@@ -1,5 +1,7 @@
+const fs = require("fs");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const cloudinary = require("../config/cloudinary");
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || "default_secret", {
@@ -28,6 +30,12 @@ const findActiveUserById = async (id) => {
     _id: id,
     account_status: { $ne: "deleted" },
   });
+};
+
+const cleanupLocalFile = (filePath) => {
+  if (filePath && fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath);
+  }
 };
 
 exports.registerUser = async (req, res) => {
@@ -307,6 +315,38 @@ exports.updateProfile = async (req, res) => {
 
     return res.json(sanitizeUser(user));
   } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+exports.uploadProfilePhoto = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No image uploaded" });
+    }
+
+    const user = await findActiveUserById(req.user.id);
+
+    if (!user) {
+      cleanupLocalFile(req.file.path);
+      return res.status(401).json({
+        message: "Account no longer exists",
+      });
+    }
+
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "profiles",
+    });
+
+    user.profile_photo = result.secure_url;
+    user.updateProfileCompletion();
+    await user.save();
+
+    cleanupLocalFile(req.file.path);
+
+    return res.json(sanitizeUser(user));
+  } catch (error) {
+    cleanupLocalFile(req.file?.path);
     return res.status(500).json({ message: error.message });
   }
 };

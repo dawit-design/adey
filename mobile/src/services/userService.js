@@ -45,6 +45,28 @@ export const updateProfile = async (data) => {
   return response.data;
 };
 
+export const uploadProfilePhoto = async (image) => {
+  const formData = new FormData();
+
+  formData.append("image", {
+    uri: image.uri,
+    name: image.fileName || `profile-${Date.now()}.jpg`,
+    type: image.type || "image/jpeg",
+  });
+
+  const response = await axiosInstance.put(
+    "/auth/upload-profile-photo",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+
+  return response.data;
+};
+
 export const changePassword = async (data) => {
   const response = await axiosInstance.put("/auth/change-password", data);
   return response.data;

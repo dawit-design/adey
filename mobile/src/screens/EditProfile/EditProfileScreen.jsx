@@ -19,7 +19,11 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import globalStyles, { colors } from "../../styles/theme";
 import styles from "./styles";
 import { COUNTRIES, GENDERS, TIMEZONES } from "../../data/countries";
-import { getCurrentUser, updateProfile } from "../../services/userService";
+import {
+  getCurrentUser,
+  updateProfile,
+  uploadProfilePhoto,
+} from "../../services/userService";
 import { saveUser } from "../../utils/tokenStorage";
 
 export default function EditProfileScreen({ navigation }) {
@@ -165,10 +169,27 @@ export default function EditProfileScreen({ navigation }) {
     setLoading(true);
 
     try {
+      let profilePhotoUrl = form.profile_photo || null;
+
+      if (
+        profilePhotoUrl &&
+        !profilePhotoUrl.startsWith("http") &&
+        !profilePhotoUrl.startsWith("https")
+      ) {
+        const imagePayload = {
+          uri: profilePhotoUrl,
+          name: profilePhotoUrl.split("/").pop() || `profile-${Date.now()}.jpg`,
+          type: "image/jpeg",
+        };
+
+        const uploadedUser = await uploadProfilePhoto(imagePayload);
+        profilePhotoUrl = uploadedUser.profile_photo;
+      }
+
       const payload = {
         ...form,
         gender: form.gender || null,
-        profile_photo: form.profile_photo || null,
+        profile_photo: profilePhotoUrl,
         date_of_birth: form.date_of_birth || null,
         nationality: form.nationality || null,
         country_of_residence: form.country_of_residence || null,
@@ -177,6 +198,7 @@ export default function EditProfileScreen({ navigation }) {
 
       const updated = await updateProfile(payload);
       await saveUser(updated);
+      setForm((current) => ({ ...current, profile_photo: updated.profile_photo }));
 
       Alert.alert("Saved", "Profile updated successfully.");
       navigation.goBack();
