@@ -1,4 +1,8 @@
-import React, { useState, useCallback } from "react";
+import React, {
+  useCallback,
+  useState,
+} from "react";
+
 import {
   View,
   Text,
@@ -8,37 +12,77 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useFocusEffect } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
 
-import { colors } from "../../styles/theme";
+import {
+  SafeAreaView,
+} from "react-native-safe-area-context";
+
+import {
+  useFocusEffect,
+} from "@react-navigation/native";
+
+import {
+  Ionicons,
+} from "@expo/vector-icons";
+
+import {
+  colors,
+} from "../../styles/theme";
+
 import styles from "./styles";
+
 import {
   getCurrentUser,
   deleteAccount,
   setAuthToken,
 } from "../../services/userService";
-import { clearAuth } from "../../utils/tokenStorage";
 
-export default function ProfileScreen({ navigation }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+import {
+  clearAuth,
+} from "../../utils/tokenStorage";
 
-  const isAdmin = user?.role === "admin";
+export default function ProfileScreen({
+  navigation,
+}) {
+  const [user, setUser] =
+    useState(null);
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const isAdmin =
+    user?.role === "admin";
 
   useFocusEffect(
     useCallback(() => {
       let active = true;
 
-      const loadUser = async () => {
-        try {
-          const result = await getCurrentUser();
-          if (active) setUser(result);
-        } catch (error) {
-          console.log("Profile load failed:", error);
-        }
-      };
+      const loadUser =
+        async () => {
+          try {
+            const result =
+              await getCurrentUser();
+
+            if (active) {
+              setUser(result);
+            }
+          } catch (error) {
+            console.log(
+              "Profile load failed:",
+              error.response?.data ||
+                error.message
+            );
+
+            if (active) {
+              Alert.alert(
+                "Unable to load profile",
+                error.response?.data
+                  ?.message ||
+                  "Please try again."
+              );
+            }
+          }
+        };
 
       loadUser();
 
@@ -48,129 +92,245 @@ export default function ProfileScreen({ navigation }) {
     }, [])
   );
 
-  const goBack = () => {
-    if (navigation.canGoBack()) {
-      navigation.goBack();
-    }
-  };
+  const handleSignOut =
+    async () => {
+      try {
+        setLoading(true);
 
-  const handleSignOut = async () => {
-    await clearAuth();
-    setAuthToken(null);
+        await clearAuth();
+        setAuthToken(null);
 
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "Landing" }],
-    });
-  };
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: "Landing",
+            },
+          ],
+        });
+      } catch (error) {
+        Alert.alert(
+          "Sign out failed",
+          "Unable to sign out. Please try again."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleDeleteAccount = () => {
-    Alert.alert(
-      "Delete Account",
-      "Are you sure you want to delete your account? This action cannot be undone.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              setLoading(true);
-
-              await deleteAccount();
-              await clearAuth();
-              setAuthToken(null);
-
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "Landing" }],
-              });
-            } catch (error) {
-              console.log("Delete account failed:", error);
-
-              Alert.alert(
-                "Delete Failed",
-                error.response?.data?.message ||
-                  "Unable to delete your account. Please try again."
-              );
-            } finally {
-              setLoading(false);
-            }
+  const handleDeleteAccount =
+    () => {
+      Alert.alert(
+        "Delete Account",
+        "Are you sure you want to delete your account? This action cannot be undone.",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
           },
-        },
-      ]
-    );
-  };
+          {
+            text: "Delete",
+            style: "destructive",
+
+            onPress: async () => {
+              try {
+                setLoading(true);
+
+                await deleteAccount();
+                await clearAuth();
+
+                setAuthToken(null);
+
+                navigation.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: "Landing",
+                    },
+                  ],
+                });
+              } catch (error) {
+                console.log(
+                  "Delete account failed:",
+                  error.response?.data ||
+                    error.message
+                );
+
+                Alert.alert(
+                  "Delete Failed",
+                  error.response?.data
+                    ?.message ||
+                    "Unable to delete your account. Please try again."
+                );
+              } finally {
+                setLoading(false);
+              }
+            },
+          },
+        ]
+      );
+    };
 
   if (!user) {
     return (
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
+      <SafeAreaView
+        style={styles.safeArea}
+        edges={[
+          "top",
+          "left",
+          "right",
+        ]}
+      >
+        <View
+          style={
+            styles.loadingContainer
+          }
+        >
+          <ActivityIndicator
+            size="large"
+            color={colors.primary}
+          />
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
+    <SafeAreaView
+      style={styles.safeArea}
+      edges={[
+        "top",
+        "left",
+        "right",
+      ]}
+    >
       <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        showsVerticalScrollIndicator={false}
+        contentContainerStyle={
+          styles.scrollContainer
+        }
+        showsVerticalScrollIndicator={
+          false
+        }
       >
         <View style={styles.container}>
-          <TouchableOpacity style={styles.backButton} onPress={goBack}>
-            <Ionicons name="arrow-back" size={19} color={colors.primary} />
-            <Text style={styles.backButtonText}>Back</Text>
-          </TouchableOpacity>
+          <Text style={styles.title}>
+            Profile
+          </Text>
 
-          <Text style={styles.title}>Profile</Text>
-          <Text style={styles.subtitle}>Your ADEY travel identity.</Text>
+          <Text
+            style={styles.subtitle}
+          >
+            Your ADEY travel identity
+            and account settings.
+          </Text>
 
-          <View style={styles.headerCard}>
+          <View
+            style={styles.headerCard}
+          >
             <TouchableOpacity
-              style={styles.editIconButton}
-              onPress={() => navigation.navigate("EditProfile")}
+              style={
+                styles.editIconButton
+              }
+              onPress={() =>
+                navigation.navigate(
+                  "EditProfile"
+                )
+              }
               disabled={loading}
               activeOpacity={0.8}
+              accessibilityRole="button"
+              accessibilityLabel="Edit profile"
             >
-              <Ionicons name="pencil-outline" size={18} color={colors.primary} />
+              <Ionicons
+                name="pencil-outline"
+                size={18}
+                color={colors.primary}
+              />
             </TouchableOpacity>
 
             {user.profile_photo ? (
               <Image
-                source={{ uri: user.profile_photo }}
-                style={styles.profileImage}
+                source={{
+                  uri:
+                    user.profile_photo,
+                }}
+                style={
+                  styles.profileImage
+                }
               />
             ) : (
-              <View style={styles.profilePlaceholder}>
-                <Text style={styles.profilePlaceholderText}>
+              <View
+                style={
+                  styles.profilePlaceholder
+                }
+              >
+                <Text
+                  style={
+                    styles.profilePlaceholderText
+                  }
+                >
                   {user.full_name
-                    ? user.full_name.charAt(0).toUpperCase()
+                    ? user.full_name
+                        .charAt(0)
+                        .toUpperCase()
                     : "?"}
                 </Text>
               </View>
             )}
 
-            <View style={styles.headerTextBox}>
-              <Text style={styles.fullName}>
-                {user.full_name || "No name set"}
+            <View
+              style={
+                styles.headerTextBox
+              }
+            >
+              <Text
+                style={styles.fullName}
+              >
+                {user.full_name ||
+                  "No name set"}
               </Text>
 
-              <View style={styles.profileMetaRow}>
-                <Ionicons name="at-outline" size={15} color={colors.darkGray} />
-                <Text style={styles.profileMetaText}>
-                  {user.username || "traveler"}
+              <View
+                style={
+                  styles.profileMetaRow
+                }
+              >
+                <Ionicons
+                  name="at-outline"
+                  size={15}
+                  color={
+                    colors.darkGray
+                  }
+                />
+
+                <Text
+                  style={
+                    styles.profileMetaText
+                  }
+                >
+                  {user.username ||
+                    "traveler"}
                 </Text>
               </View>
 
-              <View style={styles.profileMetaRow}>
+              <View
+                style={
+                  styles.profileMetaRow
+                }
+              >
                 <Ionicons
                   name="location-outline"
                   size={15}
-                  color={colors.darkGray}
+                  color={
+                    colors.darkGray
+                  }
                 />
-                <Text style={styles.profileMetaText}>
+
+                <Text
+                  style={
+                    styles.profileMetaText
+                  }
+                >
                   {user.country_of_residence ||
                     user.nationality ||
                     "Explorer"}
@@ -178,13 +338,26 @@ export default function ProfileScreen({ navigation }) {
               </View>
 
               {isAdmin ? (
-                <View style={styles.profileMetaRow}>
+                <View
+                  style={
+                    styles.profileMetaRow
+                  }
+                >
                   <Ionicons
                     name="shield-checkmark-outline"
                     size={15}
-                    color={colors.primary}
+                    color={
+                      colors.primary
+                    }
                   />
-                  <Text style={styles.profileMetaText}>Admin</Text>
+
+                  <Text
+                    style={
+                      styles.profileMetaText
+                    }
+                  >
+                    Admin
+                  </Text>
                 </View>
               ) : null}
             </View>
@@ -192,11 +365,21 @@ export default function ProfileScreen({ navigation }) {
 
           {isAdmin ? (
             <TouchableOpacity
-              style={styles.passportCard}
-              onPress={() => navigation.navigate("AdminPlaces")}
+              style={
+                styles.passportCard
+              }
+              onPress={() =>
+                navigation.navigate(
+                  "AdminPlaces"
+                )
+              }
               activeOpacity={0.85}
             >
-              <View style={styles.passportIconBox}>
+              <View
+                style={
+                  styles.passportIconBox
+                }
+              >
                 <Ionicons
                   name="settings-outline"
                   size={24}
@@ -204,80 +387,149 @@ export default function ProfileScreen({ navigation }) {
                 />
               </View>
 
-              <View style={styles.passportTextBox}>
-                <Text style={styles.passportTitle}>Admin: Manage Places</Text>
-                <Text style={styles.passportSubtitle}>
-                  Create, edit, unpublish, and upload images for places.
+              <View
+                style={
+                  styles.passportTextBox
+                }
+              >
+                <Text
+                  style={
+                    styles.passportTitle
+                  }
+                >
+                  Admin: Manage Places
+                </Text>
+
+                <Text
+                  style={
+                    styles.passportSubtitle
+                  }
+                >
+                  Create, edit,
+                  unpublish, map and
+                  upload images for
+                  places.
                 </Text>
               </View>
 
-              <Ionicons name="chevron-forward" size={22} color={colors.white} />
+              <Ionicons
+                name="chevron-forward"
+                size={22}
+                color={colors.white}
+              />
             </TouchableOpacity>
           ) : null}
 
-          <TouchableOpacity
-            style={styles.passportCard}
-            onPress={() => navigation.navigate("Passport")}
-            activeOpacity={0.85}
+          <View
+            style={
+              styles.preferencesCard
+            }
           >
-            <View style={styles.passportIconBox}>
-              <Ionicons name="ribbon-outline" size={24} color={colors.white} />
-            </View>
+            <Text
+              style={styles.cardTitle}
+            >
+              Preferences
+            </Text>
 
-            <View style={styles.passportTextBox}>
-              <Text style={styles.passportTitle}>Ethiopia Passport</Text>
-              <Text style={styles.passportSubtitle}>
-                Track places you’ve visited and places you want to explore.
-              </Text>
-            </View>
-
-            <Ionicons name="chevron-forward" size={22} color={colors.white} />
-          </TouchableOpacity>
-
-          <View style={styles.preferencesCard}>
-            <Text style={styles.cardTitle}>Preferences</Text>
-
-            <TouchableOpacity style={styles.preferenceRow} activeOpacity={0.75}>
-              <View style={styles.preferenceLeft}>
-                <View style={styles.preferenceIconBox}>
+            <TouchableOpacity
+              style={
+                styles.preferenceRow
+              }
+              activeOpacity={0.75}
+            >
+              <View
+                style={
+                  styles.preferenceLeft
+                }
+              >
+                <View
+                  style={
+                    styles.preferenceIconBox
+                  }
+                >
                   <Ionicons
                     name="moon-outline"
                     size={20}
-                    color={colors.primary}
+                    color={
+                      colors.primary
+                    }
                   />
                 </View>
 
                 <View>
-                  <Text style={styles.preferenceLabel}>Appearance</Text>
-                  <Text style={styles.preferenceValue}>System default</Text>
+                  <Text
+                    style={
+                      styles.preferenceLabel
+                    }
+                  >
+                    Appearance
+                  </Text>
+
+                  <Text
+                    style={
+                      styles.preferenceValue
+                    }
+                  >
+                    System default
+                  </Text>
                 </View>
               </View>
 
               <Ionicons
                 name="chevron-forward"
                 size={19}
-                color={colors.darkGray}
+                color={
+                  colors.darkGray
+                }
               />
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.preferenceRow}
-              onPress={() => navigation.navigate("EditProfile")}
+              style={
+                styles.preferenceRow
+              }
+              onPress={() =>
+                navigation.navigate(
+                  "EditProfile"
+                )
+              }
               activeOpacity={0.75}
             >
-              <View style={styles.preferenceLeft}>
-                <View style={styles.preferenceIconBox}>
+              <View
+                style={
+                  styles.preferenceLeft
+                }
+              >
+                <View
+                  style={
+                    styles.preferenceIconBox
+                  }
+                >
                   <Ionicons
                     name="language-outline"
                     size={20}
-                    color={colors.primary}
+                    color={
+                      colors.primary
+                    }
                   />
                 </View>
 
                 <View>
-                  <Text style={styles.preferenceLabel}>Language</Text>
-                  <Text style={styles.preferenceValue}>
-                    {user.preferred_language || "Not set"}
+                  <Text
+                    style={
+                      styles.preferenceLabel
+                    }
+                  >
+                    Language
+                  </Text>
+
+                  <Text
+                    style={
+                      styles.preferenceValue
+                    }
+                  >
+                    {user.preferred_language ||
+                      "Not set"}
                   </Text>
                 </View>
               </View>
@@ -285,28 +537,59 @@ export default function ProfileScreen({ navigation }) {
               <Ionicons
                 name="chevron-forward"
                 size={19}
-                color={colors.darkGray}
+                color={
+                  colors.darkGray
+                }
               />
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.preferenceRow, styles.lastPreferenceRow]}
-              onPress={() => navigation.navigate("EditProfile")}
+              style={[
+                styles.preferenceRow,
+                styles.lastPreferenceRow,
+              ]}
+              onPress={() =>
+                navigation.navigate(
+                  "EditProfile"
+                )
+              }
               activeOpacity={0.75}
             >
-              <View style={styles.preferenceLeft}>
-                <View style={styles.preferenceIconBox}>
+              <View
+                style={
+                  styles.preferenceLeft
+                }
+              >
+                <View
+                  style={
+                    styles.preferenceIconBox
+                  }
+                >
                   <Ionicons
                     name="time-outline"
                     size={20}
-                    color={colors.primary}
+                    color={
+                      colors.primary
+                    }
                   />
                 </View>
 
                 <View>
-                  <Text style={styles.preferenceLabel}>Timezone</Text>
-                  <Text style={styles.preferenceValue}>
-                    {user.timezone || "UTC"}
+                  <Text
+                    style={
+                      styles.preferenceLabel
+                    }
+                  >
+                    Timezone
+                  </Text>
+
+                  <Text
+                    style={
+                      styles.preferenceValue
+                    }
+                  >
+                    {user.timezone ||
+                      "UTC"}
                   </Text>
                 </View>
               </View>
@@ -314,13 +597,21 @@ export default function ProfileScreen({ navigation }) {
               <Ionicons
                 name="chevron-forward"
                 size={19}
-                color={colors.darkGray}
+                color={
+                  colors.darkGray
+                }
               />
             </TouchableOpacity>
           </View>
 
-          <View style={styles.accountCard}>
-            <Text style={styles.cardTitle}>Account</Text>
+          <View
+            style={styles.accountCard}
+          >
+            <Text
+              style={styles.cardTitle}
+            >
+              Account
+            </Text>
 
             <TouchableOpacity
               style={styles.accountRow}
@@ -328,33 +619,73 @@ export default function ProfileScreen({ navigation }) {
               disabled={loading}
               activeOpacity={0.75}
             >
-              <View style={styles.accountRowLeft}>
-                <View style={styles.accountIconBox}>
+              <View
+                style={
+                  styles.accountRowLeft
+                }
+              >
+                <View
+                  style={
+                    styles.accountIconBox
+                  }
+                >
                   <Ionicons
                     name="log-out-outline"
                     size={20}
-                    color={colors.primary}
+                    color={
+                      colors.primary
+                    }
                   />
                 </View>
 
-                <Text style={styles.accountRowText}>Sign Out</Text>
+                {loading ? (
+                  <ActivityIndicator
+                    size="small"
+                    color={
+                      colors.primary
+                    }
+                  />
+                ) : (
+                  <Text
+                    style={
+                      styles.accountRowText
+                    }
+                  >
+                    Sign Out
+                  </Text>
+                )}
               </View>
 
               <Ionicons
                 name="chevron-forward"
                 size={19}
-                color={colors.darkGray}
+                color={
+                  colors.darkGray
+                }
               />
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.accountRow, styles.lastAccountRow]}
-              onPress={handleDeleteAccount}
+              style={[
+                styles.accountRow,
+                styles.lastAccountRow,
+              ]}
+              onPress={
+                handleDeleteAccount
+              }
               disabled={loading}
               activeOpacity={0.75}
             >
-              <View style={styles.accountRowLeft}>
-                <View style={styles.deleteIconBox}>
+              <View
+                style={
+                  styles.accountRowLeft
+                }
+              >
+                <View
+                  style={
+                    styles.deleteIconBox
+                  }
+                >
                   <Ionicons
                     name="trash-outline"
                     size={20}
@@ -362,11 +693,13 @@ export default function ProfileScreen({ navigation }) {
                   />
                 </View>
 
-                {loading ? (
-                  <ActivityIndicator size="small" color={colors.error} />
-                ) : (
-                  <Text style={styles.deleteRowText}>Delete Account</Text>
-                )}
+                <Text
+                  style={
+                    styles.deleteRowText
+                  }
+                >
+                  Delete Account
+                </Text>
               </View>
 
               <Ionicons

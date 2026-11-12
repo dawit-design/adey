@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+
 import {
   View,
   Text,
@@ -9,11 +10,14 @@ import {
   Modal,
   Alert,
 } from "react-native";
+
 import { Ionicons } from "@expo/vector-icons";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import styles from "./styles";
 import { colors } from "../../styles/theme";
+
 import {
   getMyTrips,
   createTrip,
@@ -21,34 +25,56 @@ import {
   removePlaceFromTrip,
 } from "../../services/tripService";
 
-export default function TripsScreen({ navigation, route }) {
+export default function TripsScreen({ navigation }) {
   const [trips, setTrips] = useState([]);
+
   const [selectedTrip, setSelectedTrip] = useState(null);
+
   const [lastSelectedTripId, setLastSelectedTripId] = useState(null);
+
   const [loading, setLoading] = useState(true);
+
   const [modalVisible, setModalVisible] = useState(false);
+
   const [newTripTitle, setNewTripTitle] = useState("");
+
   const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", loadTrips);
+
     return unsubscribe;
   }, [navigation, selectedTrip, lastSelectedTripId]);
 
   const loadTrips = async () => {
     try {
       setLoading(true);
+
       const data = await getMyTrips();
-      setTrips(data);
+
+      const tripData = Array.isArray(data) ? data : [];
+
+      setTrips(tripData);
 
       const tripToRestoreId = selectedTrip?._id || lastSelectedTripId;
 
       if (tripToRestoreId) {
-        const updatedSelected = data.find((trip) => trip._id === tripToRestoreId);
+        const updatedSelected = tripData.find(
+          (trip) => trip._id === tripToRestoreId,
+        );
+
         setSelectedTrip(updatedSelected || null);
       }
     } catch (error) {
-      console.log("Failed to load trips:", error.response?.data || error.message);
+      console.log(
+        "Failed to load trips:",
+        error.response?.data || error.message,
+      );
+
+      Alert.alert(
+        "Unable to load trips",
+        error.response?.data?.message || error.message,
+      );
     } finally {
       setLoading(false);
     }
@@ -65,9 +91,15 @@ export default function TripsScreen({ navigation, route }) {
     }
   };
 
+  const openSavedPlaces = () => {
+    navigation.navigate("SavedPlaces");
+  };
+
   const handleCreateTrip = async () => {
     try {
-      if (!newTripTitle.trim()) return;
+      if (!newTripTitle.trim()) {
+        return;
+      }
 
       setCreating(true);
 
@@ -75,11 +107,20 @@ export default function TripsScreen({ navigation, route }) {
         title: newTripTitle.trim(),
       });
 
-      setTrips((prev) => [trip, ...prev]);
+      setTrips((previousTrips) => [trip, ...previousTrips]);
+
       setNewTripTitle("");
       setModalVisible(false);
     } catch (error) {
-      console.log("Failed to create trip:", error.response?.data || error.message);
+      console.log(
+        "Failed to create trip:",
+        error.response?.data || error.message,
+      );
+
+      Alert.alert(
+        "Unable to create trip",
+        error.response?.data?.message || error.message,
+      );
     } finally {
       setCreating(false);
     }
@@ -87,7 +128,10 @@ export default function TripsScreen({ navigation, route }) {
 
   const confirmDeleteTrip = (tripId) => {
     Alert.alert("Delete trip", "Are you sure you want to delete this trip?", [
-      { text: "Cancel", style: "cancel" },
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
       {
         text: "Delete",
         style: "destructive",
@@ -100,20 +144,33 @@ export default function TripsScreen({ navigation, route }) {
     try {
       await deleteTrip(tripId);
 
-      setTrips((prev) => prev.filter((trip) => trip._id !== tripId));
+      setTrips((previousTrips) =>
+        previousTrips.filter((trip) => trip._id !== tripId),
+      );
 
       if (selectedTrip?._id === tripId) {
         setSelectedTrip(null);
         setLastSelectedTripId(null);
       }
     } catch (error) {
-      console.log("Failed to delete trip:", error.response?.data || error.message);
+      console.log(
+        "Failed to delete trip:",
+        error.response?.data || error.message,
+      );
+
+      Alert.alert(
+        "Unable to delete trip",
+        error.response?.data?.message || error.message,
+      );
     }
   };
 
   const confirmRemovePlace = (placeId) => {
     Alert.alert("Remove place", "Remove this place from your trip?", [
-      { text: "Cancel", style: "cancel" },
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
       {
         text: "Remove",
         style: "destructive",
@@ -124,28 +181,44 @@ export default function TripsScreen({ navigation, route }) {
 
   const handleRemovePlace = async (placeId) => {
     try {
-      if (!selectedTrip) return;
+      if (!selectedTrip) {
+        return;
+      }
 
       const updatedTrip = await removePlaceFromTrip(selectedTrip._id, placeId);
 
       setSelectedTrip(updatedTrip);
+
       setLastSelectedTripId(updatedTrip._id);
 
-      setTrips((prev) =>
-        prev.map((trip) => (trip._id === updatedTrip._id ? updatedTrip : trip))
+      setTrips((previousTrips) =>
+        previousTrips.map((trip) =>
+          trip._id === updatedTrip._id ? updatedTrip : trip,
+        ),
       );
     } catch (error) {
-      console.log("Failed to remove place:", error.response?.data || error.message);
+      console.log(
+        "Failed to remove place:",
+        error.response?.data || error.message,
+      );
+
+      Alert.alert(
+        "Unable to remove place",
+        error.response?.data?.message || error.message,
+      );
     }
   };
 
   const openTripDetails = (trip) => {
     setSelectedTrip(trip);
+
     setLastSelectedTripId(trip._id);
   };
 
   const openPlaceDetail = (place) => {
-    if (!place?.slug) return;
+    if (!place?.slug) {
+      return;
+    }
 
     navigation.navigate("PlaceDetails", {
       slug: place.slug,
@@ -158,7 +231,7 @@ export default function TripsScreen({ navigation, route }) {
     return (
       <SafeAreaView style={styles.container} edges={["top"]}>
         <View style={styles.center}>
-          <ActivityIndicator size="large" />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       </SafeAreaView>
     );
@@ -167,25 +240,35 @@ export default function TripsScreen({ navigation, route }) {
   if (selectedTrip) {
     return (
       <SafeAreaView style={styles.container} edges={["top"]}>
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={styles.container}
+          showsVerticalScrollIndicator={false}
+        >
           <View style={styles.detailHero}>
-            <TouchableOpacity style={styles.backButton} onPress={goBackFromTripDetails}>
-              <Ionicons name="arrow-back" size={22} color="#fff" />
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={goBackFromTripDetails}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="arrow-back" size={22} color="#FFFFFF" />
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.deleteButton}
               onPress={() => confirmDeleteTrip(selectedTrip._id)}
+              activeOpacity={0.8}
             >
-              <Ionicons name="trash-outline" size={21} color="#fff" />
+              <Ionicons name="trash-outline" size={21} color="#FFFFFF" />
             </TouchableOpacity>
 
             <View style={styles.detailHeroContent}>
               <Text style={styles.detailEyebrow}>ADEY TRIP</Text>
+
               <Text style={styles.detailTitle}>{selectedTrip.title}</Text>
 
               <View style={styles.detailMetaRow}>
-                <Ionicons name="location-outline" size={16} color="#fff" />
+                <Ionicons name="location-outline" size={16} color="#FFFFFF" />
+
                 <Text style={styles.detailMetaText}>
                   {selectedTrip.places?.length || 0} places
                 </Text>
@@ -196,6 +279,7 @@ export default function TripsScreen({ navigation, route }) {
           <View style={styles.detailContent}>
             <View style={styles.summaryCard}>
               <Text style={styles.summaryTitle}>Trip overview</Text>
+
               <Text style={styles.summaryText}>
                 {selectedTrip.description ||
                   "A simple collection of places you want to explore across Ethiopia."}
@@ -204,6 +288,7 @@ export default function TripsScreen({ navigation, route }) {
 
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Places in this trip</Text>
+
               <Text style={styles.sectionCount}>
                 {selectedTrip.places?.length || 0}
               </Text>
@@ -213,7 +298,9 @@ export default function TripsScreen({ navigation, route }) {
               selectedTrip.places.map((item) => {
                 const place = item.place;
 
-                if (!place) return null;
+                if (!place) {
+                  return null;
+                }
 
                 return (
                   <TouchableOpacity
@@ -223,11 +310,16 @@ export default function TripsScreen({ navigation, route }) {
                     onPress={() => openPlaceDetail(place)}
                   >
                     <View style={styles.placeIcon}>
-                      <Ionicons name="map-outline" size={22} color={colors.primary} />
+                      <Ionicons
+                        name="map-outline"
+                        size={22}
+                        color={colors.primary}
+                      />
                     </View>
 
                     <View style={styles.placeInfo}>
                       <Text style={styles.placeName}>{place.name}</Text>
+
                       <Text style={styles.placeLocation}>
                         {place.city || place.area || place.region || "Ethiopia"}
                       </Text>
@@ -245,7 +337,9 @@ export default function TripsScreen({ navigation, route }) {
             ) : (
               <View style={styles.emptyPlacesCard}>
                 <Ionicons name="map-outline" size={30} color={colors.primary} />
+
                 <Text style={styles.emptyPlacesTitle}>No places yet</Text>
+
                 <Text style={styles.emptyPlacesText}>
                   Open a destination page and tap Add to Trip.
                 </Text>
@@ -264,25 +358,82 @@ export default function TripsScreen({ navigation, route }) {
           <TouchableOpacity
             style={styles.mainBackButton}
             onPress={goBackFromMainTrips}
+            activeOpacity={0.8}
           >
             <Ionicons name="arrow-back" size={20} color={colors.white} />
+
             <Text style={styles.mainBackText}>Back</Text>
           </TouchableOpacity>
 
           <View>
             <Text style={styles.eyebrow}>ADEY TRIPS</Text>
-            <Text style={styles.title}>Your Ethiopia Journeys</Text>
+
+            <Text style={styles.title}>Plan Your Ethiopia Journeys</Text>
+
             <Text style={styles.subtitle}>
-              Collect places into simple trips you want to explore.
+              Organize saved places into trips you want to explore.
             </Text>
           </View>
 
           <TouchableOpacity
             style={styles.headerButton}
             onPress={() => setModalVisible(true)}
+            activeOpacity={0.85}
           >
             <Ionicons name="add" size={26} color={colors.white} />
           </TouchableOpacity>
+        </View>
+
+        <View style={styles.tripList}>
+          <TouchableOpacity
+            style={styles.tripCard}
+            activeOpacity={0.85}
+            onPress={openSavedPlaces}
+          >
+            <View style={styles.tripCardTop}>
+              <View style={styles.tripBadge}>
+                <Ionicons name="bookmark" size={15} color={colors.primary} />
+
+                <Text style={styles.tripBadgeText}>SAVED</Text>
+              </View>
+
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color={colors.darkGray}
+              />
+            </View>
+
+            <Text style={styles.tripTitle}>Saved Places</Text>
+
+            <Text style={styles.tripDescription}>
+              Revisit destinations you bookmarked and add them to a future trip.
+            </Text>
+
+            <View style={styles.tripMetaRow}>
+              <View style={styles.tripMeta}>
+                <Ionicons
+                  name="heart-outline"
+                  size={16}
+                  color={colors.primary}
+                />
+
+                <Text style={styles.tripMetaText}>Open saved collection</Text>
+              </View>
+
+              <Ionicons
+                name="bookmark-outline"
+                size={20}
+                color={colors.primary}
+              />
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>My Trips</Text>
+
+          <Text style={styles.sectionCount}>{trips.length}</Text>
         </View>
 
         {trips.length === 0 ? (
@@ -292,13 +443,16 @@ export default function TripsScreen({ navigation, route }) {
             </View>
 
             <Text style={styles.emptyTitle}>Start Planning Your Journey</Text>
+
             <Text style={styles.emptyText}>
-              Create collections of places you want to visit across Ethiopia.
+              Create a trip and organize the places you want to explore across
+              Ethiopia.
             </Text>
 
             <TouchableOpacity
               style={styles.emptyButton}
               onPress={() => setModalVisible(true)}
+              activeOpacity={0.85}
             >
               <Text style={styles.emptyButtonText}>Create Your First Trip</Text>
             </TouchableOpacity>
@@ -314,7 +468,12 @@ export default function TripsScreen({ navigation, route }) {
               >
                 <View style={styles.tripCardTop}>
                   <View style={styles.tripBadge}>
-                    <Ionicons name="compass-outline" size={15} color={colors.primary} />
+                    <Ionicons
+                      name="compass-outline"
+                      size={15}
+                      color={colors.primary}
+                    />
+
                     <Text style={styles.tripBadgeText}>
                       {trip.status || "planning"}
                     </Text>
@@ -334,13 +493,22 @@ export default function TripsScreen({ navigation, route }) {
 
                 <View style={styles.tripMetaRow}>
                   <View style={styles.tripMeta}>
-                    <Ionicons name="location-outline" size={16} color={colors.primary} />
+                    <Ionicons
+                      name="location-outline"
+                      size={16}
+                      color={colors.primary}
+                    />
+
                     <Text style={styles.tripMetaText}>
                       {trip.places?.length || 0} places
                     </Text>
                   </View>
 
-                  <Ionicons name="chevron-forward" size={20} color={colors.darkGray} />
+                  <Ionicons
+                    name="chevron-forward"
+                    size={20}
+                    color={colors.darkGray}
+                  />
                 </View>
 
                 {trip.places?.length > 0 ? (
@@ -387,15 +555,20 @@ export default function TripsScreen({ navigation, route }) {
               placeholder="Example: Weekend Addis"
               value={newTripTitle}
               onChangeText={setNewTripTitle}
+              returnKeyType="done"
+              onSubmitEditing={handleCreateTrip}
             />
 
             <TouchableOpacity
               style={[
                 styles.createButton,
-                (!newTripTitle.trim() || creating) && styles.createButtonDisabled,
+
+                (!newTripTitle.trim() || creating) &&
+                  styles.createButtonDisabled,
               ]}
               onPress={handleCreateTrip}
               disabled={!newTripTitle.trim() || creating}
+              activeOpacity={0.85}
             >
               {creating ? (
                 <ActivityIndicator color={colors.white} />

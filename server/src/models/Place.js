@@ -181,9 +181,69 @@ const placeSchema = new mongoose.Schema(
         enum: ["Point"],
         default: "Point",
       },
+
       coordinates: {
-        type: [Number], // [longitude, latitude]
+        type: [Number],
+
+        // GeoJSON order:
+        // [longitude, latitude]
         default: [0, 0],
+      },
+    },
+
+    /*
+        Tracks the location workflow.
+
+        pending:
+        The destination has not been checked yet.
+
+        mapped:
+        Valid coordinates are available.
+
+        needs-review:
+        Automatic geocoding could not confidently
+        locate the destination. An admin must review it.
+      */
+    geocoding: {
+      status: {
+        type: String,
+        enum: ["pending", "mapped", "needs-review"],
+        default: "pending",
+        index: true,
+      },
+
+      source: {
+        type: String,
+        enum: ["none", "automatic", "manual", "google-maps"],
+        default: "none",
+      },
+
+      matchedName: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+
+      searchQuery: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+
+      lastAttemptedAt: {
+        type: Date,
+        default: null,
+      },
+
+      mappedAt: {
+        type: Date,
+        default: null,
+      },
+
+      error: {
+        type: String,
+        default: "",
+        trim: true,
       },
     },
 
@@ -239,30 +299,35 @@ const placeSchema = new mongoose.Schema(
         max: 10,
         default: 5,
       },
+
       culture: {
         type: Number,
         min: 1,
         max: 10,
         default: 5,
       },
+
       nature: {
         type: Number,
         min: 1,
         max: 10,
         default: 5,
       },
+
       photography: {
         type: Number,
         min: 1,
         max: 10,
         default: 5,
       },
+
       familyFriendly: {
         type: Number,
         min: 1,
         max: 10,
         default: 5,
       },
+
       accessibility: {
         type: Number,
         min: 1,
@@ -270,8 +335,6 @@ const placeSchema = new mongoose.Schema(
         default: 5,
       },
     },
-
-  
 
     collections: [
       {
@@ -387,7 +450,7 @@ const placeSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 placeSchema.index({
@@ -403,12 +466,44 @@ placeSchema.index({
   tourismPriority: "text",
 });
 
-placeSchema.index({ location: "2dsphere" });
-placeSchema.index({ name: 1, region: 1 }, { unique: true });
-placeSchema.index({ featured: -1, featuredOrder: 1 });
-placeSchema.index({ category: 1, region: 1 });
-placeSchema.index({ isWeekendTrip: 1 });
-placeSchema.index({ ethiopiaScore: -1 });
-placeSchema.index({ popularityScore: -1 });
+placeSchema.index({
+  location: "2dsphere",
+});
+
+placeSchema.index(
+  {
+    name: 1,
+    region: 1,
+  },
+  {
+    unique: true,
+  },
+);
+
+placeSchema.index({
+  featured: -1,
+  featuredOrder: 1,
+});
+
+placeSchema.index({
+  category: 1,
+  region: 1,
+});
+
+placeSchema.index({
+  isWeekendTrip: 1,
+});
+
+placeSchema.index({
+  ethiopiaScore: -1,
+});
+
+placeSchema.index({
+  popularityScore: -1,
+});
+
+placeSchema.index({
+  "geocoding.status": 1,
+});
 
 module.exports = mongoose.model("Place", placeSchema);
